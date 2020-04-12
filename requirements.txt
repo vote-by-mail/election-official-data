@@ -9,3 +9,4 @@ pandas==1.0.0
 beautifulsoup4==4.9.0
 pdfminer==20191125
 PyPDF2==1.26.0
+tqdm==2.2.3
