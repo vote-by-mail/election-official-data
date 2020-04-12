@@ -47,6 +47,7 @@ def parse_city_lines(lines):
   match = city_county_re.search(lines)
 
   ret = {
+    'key': strip_newline(match.group(0)).strip(),
     'city_type': match.group(1),
     'city': match.group(2),
     'county': match.group(3),
