@@ -8,7 +8,6 @@ end_page_re = re.compile('^Page \d+ of 360$')
 
 def chunk_city(text):
   lines = text.split('\n')
-
   city_lines = []
   within_city = False
 
@@ -41,10 +40,13 @@ def first_group(regex, lines):
   match = regex.search(lines)
   return match.group(1).strip() if match else None
 
+def strip_newline(string):
+  return string.replace('\n', '')
+
 def parse_city_lines(lines):
   match = city_county_re.search(lines)
 
-  return {
+  ret = {
     'city_type': match.group(1),
     'city': match.group(2),
     'county': match.group(3),
@@ -57,6 +59,8 @@ def parse_city_lines(lines):
     'url': first_group(url_re, lines),
   }
 
+  return { k: strip_newline(v) if isinstance(v, str) else v for k, v in ret.items() }
+
 if __name__ == '__main__':
   with open('results/WI Municipal Clerks no emails Updated 3-23-2020.pdf', 'rb') as fh:
     pdf_reader = PyPDF2.PdfFileReader(fh)
@@ -67,5 +71,5 @@ if __name__ == '__main__':
       for city_lines in chunk_city(text):
         records += [parse_city_lines(city_lines)]
 
-  with open('results/records.json', 'w') as fh:
+  with open('results/records.noemail.json', 'w') as fh:
     json.dump(records, fh)
