@@ -1,0 +1,1 @@
+curl https://elections.maryland.gov/about/county_boards.html > results/result.html
