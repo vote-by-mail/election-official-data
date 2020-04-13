@@ -26,13 +26,13 @@ def parse_contact(h4):
   line2 = line1.next_element.next_element
   if title.endswith('Address:'):
     return {
-      'kind': title,
+      'kind': title.split(':')[0],
       **parse_addr_line('addr1', line1),
       **parse_addr_line('addr2', line2),
     }
   elif title == 'Contact Information:':
     return {
-      'kind': title,
+      'kind': title.split(':')[0],
       **parse_contact_line(line1),
       **parse_contact_line(line2),
     }
@@ -48,6 +48,10 @@ def parse_html(file):
 
   contact_els = soup.find_all('h4')
   contacts = [parse_contact(contact) for contact in contact_els]
+  contacts_dict = {
+    contact['kind']: contact
+    for contact in contacts
+  }
 
   email_el = soup.find('a')
   email = email_el.text.strip() if email_el else None
@@ -55,12 +59,13 @@ def parse_html(file):
   return {
     'county': county.strip(),
     'name': name.strip(),
-    'contacts': contacts,
+    'contacts': contacts_dict,
     'email': email,
+    'fax': contacts_dict.get('Contact Information', {}).get('Fax')
   }
 
 if __name__ == '__main__':
   js = [parse_html(file) for file in files]
 
-  with open('results/result.json', 'w') as fh:
+  with open('public/results.json', 'w') as fh:
     json.dump(js, fh)
