@@ -1,3 +1,4 @@
+from common import cache_request
 import json
 import re
 from bs4 import BeautifulSoup
@@ -37,8 +38,9 @@ def parse_county(county, datum):
     'email': re.search('Email:\s*(\S+)', email).group(1),
   }
 
-with open('results/page.html') as fh:
-  soup = BeautifulSoup(fh, 'lxml')
+if __name__ == '__main__':
+  text = cache_request('https://www.sos.state.mn.us/elections-voting/find-county-election-office/')
+  soup = BeautifulSoup(text, 'lxml')
   counties = soup.select('h2.contentpage-h2')
 
   data = []
@@ -47,5 +49,5 @@ with open('results/page.html') as fh:
     datum = soup.find(id=data_id)
     data += [parse_county(county, datum)]
 
-with open('public/results.json', 'w') as fh:
-  json.dump(data, fh)
+  with open('public/minnesota.json', 'w') as fh:
+    json.dump(data, fh)
