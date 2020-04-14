@@ -1,3 +1,4 @@
+from common import cache_request
 import json
 import re
 from bs4 import BeautifulSoup
@@ -35,23 +36,23 @@ def find_hrefs(line):
   return results
 
 if __name__ == '__main__':
-  with open('results/result.html') as fh:
-    soup = BeautifulSoup(fh, 'lxml')
-    counties = soup.select('div.mdgov_contentWrapper > p')
+  text = cache_request('https://elections.maryland.gov/about/county_boards.html')
+  soup = BeautifulSoup(text, 'lxml')
+  counties = soup.select('div.mdgov_contentWrapper > p')
 
-    # lines = [line for line in line_gen(counties[1].children)]
-    data = []
-    for county in counties:
-      lines = [l for l in county.children]
-      datum = {
-        'county': lines[0].text,
-        'name': find_re(election_director_re, lines),
-        'phone': find_re(phone_re, lines, find_all=True),
-        'fax': find_re(fax_re, lines),
-        **find_hrefs(lines)
-      }
-      assert(datum['emails'])
-      data += [datum]
+  # lines = [line for line in line_gen(counties[1].children)]
+  data = []
+  for county in counties:
+    lines = [l for l in county.children]
+    datum = {
+      'county': lines[0].text,
+      'name': find_re(election_director_re, lines),
+      'phone': find_re(phone_re, lines, find_all=True),
+      'fax': find_re(fax_re, lines),
+      **find_hrefs(lines)
+    }
+    assert(datum['emails'])
+    data += [datum]
 
-  with open('public/results.json', 'w') as fh:
+  with open('public/maryland.json', 'w') as fh:
     json.dump(data, fh)

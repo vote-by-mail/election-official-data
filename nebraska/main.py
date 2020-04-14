@@ -55,5 +55,5 @@ if __name__ == '__main__':
   assert(len(data) == 93)
   assert(all([d for d in data if d['Email Address']]))
 
-  with open('public/results.json', 'w') as fh:
+  with open('public/nebraska.json', 'w') as fh:
     json.dump(data, fh)
