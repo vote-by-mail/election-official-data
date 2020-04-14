@@ -20,7 +20,7 @@ def go_back():
   driver.find_element_by_xpath("//input[@name='SubmitBack']").click()
 
 def save_html(i, html):
-  with open(f'results/result.{i}.html', 'w') as fh:
+  with open(f'georgia/cache/result.{i}.html', 'w') as fh:
     fh.write(html)
 
 
