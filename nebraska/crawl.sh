@@ -1,1 +1,0 @@
-curl https://sos.nebraska.gov/elections/election-officials-contact-information > results/page.html

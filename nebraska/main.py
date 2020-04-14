@@ -1,3 +1,4 @@
+from common import cache_request
 import json
 import re
 from bs4 import BeautifulSoup
@@ -45,8 +46,8 @@ def parse_county(county):
   return result
 
 if __name__ == '__main__':
-  with open('results/page.html') as fh:
-    soup = BeautifulSoup(fh, 'lxml')
+  text = cache_request('https://sos.nebraska.gov/elections/election-officials-contact-information')
+  soup = BeautifulSoup(text, 'lxml')
 
   counties = soup.select('div.field-items>div.field-item div.col-sm-6')
   print(len(counties))
