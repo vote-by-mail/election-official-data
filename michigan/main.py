@@ -6,13 +6,13 @@ def filter_dict_by_key(d, keys):
 
 output = []
 
-with open('Michigan.jl') as fh:
+with open('michigan/cache/data.jl') as fh:
   for line in fh:
     data = json.loads(line)
 
     if data['type'] != 'local':
       continue
-    
+
     value = filter_dict_by_key(
       data,
       {'clerk', 'email', 'phone', 'fax'}
@@ -25,9 +25,14 @@ with open('Michigan.jl') as fh:
     if value['city'].endswith('Twp'):
       value['city'] = value['city'][:-3] + 'Township'
 
-    output += [value]
+    output += [{
+      'locale': value['city'] + ':' + value['county'],
+      'city': value['city'],
+      'county': value['county'],
+      'emails': [value['email']],
+      'phones': [value['phone']],
+      'official': value['clerk'],
+    }]
 
-with open('MichiganData.json', 'w') as fh:
-  json.dump(output, fh,
-    sort_keys=True, indent=2, separators=(',', ': ')
-  )
+with open('public/michigan.json', 'w') as fh:
+  json.dump(output, fh)
