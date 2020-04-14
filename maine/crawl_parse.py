@@ -1,9 +1,7 @@
-import requests
+from common import cache_request
 import csv
 import json
 from io import StringIO
-
-URL = 'https://www.maine.gov/tools/whatsnew/index.php?topic=cec_clerks_registrars&v=text'
 
 def record(datum):
   return {
@@ -15,12 +13,12 @@ def record(datum):
   }
 
 if __name__ == '__main__':
-  text = requests.get(URL).text
+  text = cache_request('https://www.maine.gov/tools/whatsnew/index.php?topic=cec_clerks_registrars&v=text')
   if text.startswith('<plaintext>'):
     text = text[len('<plaintext>'):]
   reader = csv.reader(StringIO(text), delimiter='|')
   csv_data = [line for line in reader if line]
 
   json_data = [record(datum) for datum in csv_data]
-  with open('public/results.json', 'w') as fh:
+  with open('public/maine.json', 'w') as fh:
     json.dump(json_data, fh)
