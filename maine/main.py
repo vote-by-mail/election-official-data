@@ -5,11 +5,11 @@ from io import StringIO
 
 def record(datum):
   return {
-    'county': datum[0],
-    'name': datum[1],
+    'locale': datum[0],
+    'official': datum[1],
     'address': datum[2:5],
-    'phone': datum[5],
-    'fax': datum[6],
+    'phones': [datum[5]],
+    'faxes': [datum[6]],
   }
 
 if __name__ == '__main__':

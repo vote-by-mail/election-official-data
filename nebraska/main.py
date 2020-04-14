@@ -43,7 +43,18 @@ def parse_county(county):
   match = county_re.search(result['County'])
   result['County'] = match.group(1)
   result['Id'] = match.group(2)
-  return result
+  assert(result['Email Address'])
+  assert(result['Name'])
+  return {
+    'locale': result['County'],
+    'official': result['Name'],
+    'emails': [result['Email Address']],
+    'faxes': [result['Fax Number']],
+    'phones': [result['Phone Number']],
+    'county': result['County'],
+    'address': result['Address'],
+    'party': result['Party Affiliation'],
+  }
 
 if __name__ == '__main__':
   text = cache_request('https://sos.nebraska.gov/elections/election-officials-contact-information')
@@ -53,7 +64,6 @@ if __name__ == '__main__':
   print(len(counties))
   data = [parse_county(county) for county in counties]
   assert(len(data) == 93)
-  assert(all([d for d in data if d['Email Address']]))
 
   with open('public/nebraska.json', 'w') as fh:
     json.dump(data, fh)

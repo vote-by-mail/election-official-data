@@ -57,11 +57,11 @@ def parse_html(file):
   email = email_el.text.strip() if email_el else None
 
   return {
-    'county': county.strip(),
-    'name': name.strip(),
+    'locale': county.strip(),
+    'official': name.strip(),
+    'emails': [email],
+    'faxes': [contacts_dict.get('Contact Information', {}).get('Fax')],
     'contacts': contacts_dict,
-    'email': email,
-    'fax': contacts_dict.get('Contact Information', {}).get('Fax')
   }
 
 if __name__ == '__main__':

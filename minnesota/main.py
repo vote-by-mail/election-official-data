@@ -31,11 +31,11 @@ def parse_county(county, datum):
   fax = next(_iter)
   email = next(_iter)
   return {
-    'county': county.text,
-    'name': name,
-    'phone': re.search('Phone: ([0-9\-]+)', phone).group(1),
-    'fax': re.search('Fax: ([0-9\-]+)', fax).group(1),
-    'email': re.search('Email:\s*(\S+)', email).group(1),
+    'locale': county.text,
+    'official': name,
+    'phones': [re.search('Phone: ([0-9\-]+)', phone).group(1)],
+    'faxes': [re.search('Fax: ([0-9\-]+)', fax).group(1)],
+    'emails': [re.search('Email:\s*(\S+)', email).group(1)],
   }
 
 if __name__ == '__main__':

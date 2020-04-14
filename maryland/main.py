@@ -44,12 +44,15 @@ if __name__ == '__main__':
   data = []
   for county in counties:
     lines = [l for l in county.children]
+    href_datum = find_hrefs(lines)
+    url_datum = { 'url': href_datum['urls'][0] } if href_datum['urls'] else {}
     datum = {
-      'county': lines[0].text,
-      'name': find_re(election_director_re, lines),
-      'phone': find_re(phone_re, lines, find_all=True),
-      'fax': find_re(fax_re, lines),
-      **find_hrefs(lines)
+      'locale': lines[0].text,
+      'official': find_re(election_director_re, lines),
+      'phones': find_re(phone_re, lines, find_all=True),
+      'faxs': [find_re(fax_re, lines)],
+      **url_datum,
+      **href_datum,
     }
     assert(datum['emails'])
     data += [datum]
