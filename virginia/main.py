@@ -15,7 +15,8 @@ def get_locality_daum(id_):
   page = cache_request(
     'https://vote.elections.virginia.gov/VoterInformation/PublicContactLookup',
     method='POST',
-    data={'LocalityUid': id_}
+    data={'LocalityUid': id_},
+    wait=2,
   )
   soup = BeautifulSoup(page, 'lxml')
   keys = soup.select('.resultsWrapper')[0].select('h5.display-lable')
