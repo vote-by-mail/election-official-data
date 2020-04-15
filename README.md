@@ -36,6 +36,9 @@ interface Contact {
 ### Georgia
 - Contact info for county board of registrars offices [website](https://elections.sos.ga.gov/Elections/countyregistrars.do).
 
+### Virginia
+- Contact info available [here](https://vote.elections.virginia.gov/VoterInformation/PublicContactLookup)
+
 ### Wisconsin
 - Municipal Clerk Lookup ([API](https://myvote.wi.gov/en-US/MyMunicipalClerk))
 - Municipal Clerk List ([PDF](https://elections.wi.gov/sites/elections.wi.gov/files/2020-03/WI%20Municipal%20Clerks%20no%20emails%20Updated%203-23-2020.pdf))
