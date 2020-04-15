@@ -3,7 +3,7 @@ import json
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
-files = glob('georgia/cahce/*.html')
+files = glob('georgia/cache/*.html')
 
 def parse_addr_line(key, line):
   if not isinstance(line, NavigableString):
@@ -66,6 +66,7 @@ def parse_html(file):
 
 if __name__ == '__main__':
   js = [parse_html(file) for file in files]
+  print(F'Found {len(js)} records')
 
   with open('public/georgia.json', 'w') as fh:
     json.dump(js, fh)
