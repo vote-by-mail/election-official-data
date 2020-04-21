@@ -29,8 +29,8 @@ with open('michigan/cache/data.jl') as fh:
       'locale': value['city'] + ':' + value['county'],
       'city': value['city'],
       'county': value['county'],
-      'emails': [value['email']],
-      'phones': [value['phone']],
+      'emails': [value['email']] if value['email'] else [],
+      'phones': [value['phone']] if value['email'] else [],
       'faxes': [value['fax']],
       'official': value['clerk'],
     }]
