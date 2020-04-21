@@ -23,8 +23,11 @@ def get_locality_daum(id_):
   vals = soup.select('.resultsWrapper')[0].select('p.display-field')
   assert(len(keys) == len(vals))
   results = { key.text.strip(): val.text.strip() for key, val in zip(keys, vals) }
+  locale = soup.select('select > option[selected="selected"]')[0].text.title()
   final = {
-    'locale': soup.select('select > option[selected="selected"]')[0].text.title(),
+    'locale': locale,
+    'county': locale if locale.endswith('County') else None,
+    'city': locale if not locale.endswith('County') else None,
     'official': results['Registrar'],
     'emails': [results['Email']],
     'faxes': [results['Fax']],
