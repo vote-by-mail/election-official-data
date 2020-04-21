@@ -45,13 +45,14 @@ def parse_county(county):
   result['Id'] = match.group(2)
   assert(result['Email Address'])
   assert(result['Name'])
+  county = result['County'] + ' County'
   return {
-    'locale': result['County'],
+    'locale': county,
     'official': result['Name'],
     'emails': [result['Email Address']],
     'faxes': [result['Fax Number']],
     'phones': [result['Phone Number']],
-    'county': result['County'],
+    'county': county,
     'address': result['Address'],
     'party': result['Party Affiliation'],
   }
