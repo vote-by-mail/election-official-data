@@ -39,7 +39,7 @@ class TestPublic(unittest.TestCase):
       self.assert_nonempty_string(d.get('official'))
 
       self.assert_nonempty_string(d.get('city'))
-      self.assert_nonempty_string(d.get('county'))
+      self.assert_nonempty_string(d.get('county'), endswith=' County')
 
       self.assert_string_list(d.get('emails'))
       self.assert_string_list(d.get('faxes'))
