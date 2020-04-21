@@ -13,7 +13,10 @@ def find_re(regex, lines, find_all=False):
         return match.group(1)
       if match and find_all:
         results += [match.group(1)]
-  return results
+  if find_all:
+    return results
+  else:
+    return None
 
 phone_re = re.compile('(\d{3}-\d{3}-\d{4})$')
 fax_re = re.compile('(\d{3}-\d{3}-\d{4}) \(Fax\)')
