@@ -25,10 +25,12 @@ with open('michigan/cache/data.jl') as fh:
     if value['city'].endswith('Twp'):
       value['city'] = value['city'][:-3] + 'Township'
 
+    county = value['county'].title().strip()
+
     output += [{
-      'locale': value['city'] + ':' + value['county'],
+      'locale': value['city'] + ':' + county,
       'city': value['city'],
-      'county': value['county'],
+      'county': county,
       'emails': [value['email']] if value['email'] else [],
       'phones': [value['phone']] if value['email'] else [],
       'faxes': [value['fax']],
