@@ -1,5 +1,5 @@
 # Election Contacts
-This repo collects information by locale (county or town) from critical swing states for [mailmyballot.org](mailmyballot.org).  Code for each state is under the state's name.
+This repo collects information by locale (county or town) from critical swing states for [MailMyBallot.org](https://mailmyballot.org).  Code for each state is under the state's name.
 
 ## Format
 Data is saved in the `/public` folder by state (e.g. `florida.json`).  Each file is a json array of all election-official contacts for locale.  The format of the contacts depends on the state but supports (at a minimum) the following `typescript` interface
@@ -43,3 +43,12 @@ interface Contact {
 - Municipal Clerk Lookup ([API](https://myvote.wi.gov/en-US/MyMunicipalClerk))
 - Municipal Clerk List ([PDF](https://elections.wi.gov/sites/elections.wi.gov/files/2020-03/WI%20Municipal%20Clerks%20no%20emails%20Updated%203-23-2020.pdf))
 - County Clerk List ([PDF](https://elections.wi.gov/sites/elections.wi.gov/files/2020-03/WI%20County%20Clerks%20no%20emails%20Updated%203-23-2020.pdf))
+
+## Usage
+To get started, look at the `Makefile`.
+
+## About Us
+This repository is for [MailMyBallot.org](https://mailmyballot.org), a [National Vote at Home Institute](https://voteathome.org) project.
+
+## Contributors
+- [tianhuil](https://github.com/tianhuil/)
