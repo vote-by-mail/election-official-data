@@ -1,5 +1,6 @@
 from glob import glob
 import json
+import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
@@ -9,7 +10,7 @@ def parse_addr_line(key, line):
   if not isinstance(line, NavigableString):
     return {}
   else:
-    return {key: line.strip()}
+    return {key: line.strip().title().replace(' Ga ', ' GA ')}
 
 def parse_contact_line(line):
   if not isinstance(line, NavigableString):
@@ -43,8 +44,9 @@ def parse_html(file):
   with open(file) as fh:
     soup = BeautifulSoup(fh.read(), "lxml")
 
-  county = soup.find('hr').next_element
-  name = county.next_element.next_element
+  registrar_str = soup.find('hr').next_element
+  name = registrar_str.next_element.next_element
+  county = re.search('(.* County) Chief Registrar', registrar_str).group(1).title()
 
   contact_els = soup.find_all('h4')
   contacts = [parse_contact(contact) for contact in contact_els]
@@ -58,7 +60,8 @@ def parse_html(file):
 
   return {
     'locale': county.strip(),
-    'official': name.strip(),
+    'county': county.strip(),
+    'official': name.title().strip(),
     'emails': [email],
     'faxes': [contacts_dict.get('Contact Information', {}).get('Fax')],
     'contacts': contacts_dict,
