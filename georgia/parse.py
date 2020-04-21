@@ -57,13 +57,14 @@ def parse_html(file):
 
   email_el = soup.find('a')
   email = email_el.text.strip() if email_el else None
+  fax = contacts_dict.get('Contact Information', {}).get('Fax')
 
   return {
     'locale': county.strip(),
     'county': county.strip(),
     'official': name.title().strip(),
-    'emails': [email],
-    'faxes': [contacts_dict.get('Contact Information', {}).get('Fax')],
+    'emails': [email] if email else [],
+    'faxes': [fax] if fax else [],
     'contacts': contacts_dict,
   }
 
