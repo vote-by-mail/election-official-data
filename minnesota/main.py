@@ -32,6 +32,7 @@ def parse_county(county, datum):
   email = next(_iter)
   return {
     'locale': county.text,
+    'county': county.text,
     'official': name,
     'phones': [re.search('Phone: ([0-9\-]+)', phone).group(1)],
     'faxes': [re.search('Fax: ([0-9\-]+)', fax).group(1)],

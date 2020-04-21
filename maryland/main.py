@@ -47,7 +47,8 @@ if __name__ == '__main__':
     href_datum = find_hrefs(lines)
     url_datum = { 'url': href_datum['urls'][0] } if href_datum['urls'] else {}
     datum = {
-      'locale': lines[0].text,
+      'locale': lines[0].text + ' County',
+      'county': lines[0].text + ' County',
       'official': find_re(election_director_re, lines),
       'phones': find_re(phone_re, lines, find_all=True),
       'faxs': [find_re(fax_re, lines)],

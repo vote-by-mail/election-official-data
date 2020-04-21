@@ -13,6 +13,7 @@ for file in files:
       'official': datum['name'].replace(u'\xa0', ' ').split(',')[0].strip(),
       'emails': [datum['email'].split(':')[1].strip()],  # ignore leading 'mailto:'
       'url': datum['url'],
+      'county': county,
     }]
 
 with open('public/florida.json', 'w') as fh:

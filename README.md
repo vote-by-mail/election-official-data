@@ -28,6 +28,10 @@ interface Contact {
 - [Vote by Mail](https://dos.myflorida.com/elections/for-voters/voting/vote-by-mail/)
 - [County Supervisors](https://dos.elections.myflorida.com/supervisors/)
 
+### Maine
+- [Vote by Mail](https://www.maine.gov/sos/cec/elec/voter-info/absenteeguide.html)
+- [Municipal Clerks](https://www.maine.gov/sos/cec/elec/munic.html) (with a link to download them as a CSV)
+
 ### Michigan
 - They seem to accept email applications [Election Official's Manual](https://www.michigan.gov/documents/sos/VI_Michigans_Absentee_Voting_Process_265992_7.pdf)
 - "Michigan residents who live in unincorporated places register to vote with their township clerk": [MI SOS](https://www.michigan.gov/documents/sos/ED-106_Circulating_CityTwp_Nom_+_Qual_Pet_Forms_647901_7.pdf)

@@ -6,6 +6,7 @@ from io import StringIO
 def record(datum):
   return {
     'locale': datum[0],
+    'city': datum[0],
     'official': datum[1],
     'address': datum[2:5],
     'phones': [datum[5]],
