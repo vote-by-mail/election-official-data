@@ -11,7 +11,7 @@ def get_locality_ids():
   soup = BeautifulSoup(page, 'lxml')
   return [option['value'] for option in soup.select('select>option') if option['value']]
 
-def get_locality_daum(id_):
+def get_locality_datum(id_):
   page = cache_request(
     'https://vote.elections.virginia.gov/VoterInformation/PublicContactLookup',
     method='POST',
@@ -40,6 +40,6 @@ def get_locality_daum(id_):
 if __name__ == '__main__':
   ids = get_locality_ids()
 
-  locality_data = [get_locality_daum(id_) for id_ in tqdm(get_locality_ids())]
+  locality_data = [get_locality_datum(id_) for id_ in tqdm(ids)]
   with open('public/virginia.json', 'w') as fh:
     json.dump(locality_data, fh)
