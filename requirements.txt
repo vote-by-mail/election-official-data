@@ -12,4 +12,5 @@ PyPDF2==1.26.0
 tqdm==2.2.3
 requests==2.23.0
 ediblepickle==1.1.3
+parameterized==0.7.4
 -e ./common
