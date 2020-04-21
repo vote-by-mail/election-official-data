@@ -2,10 +2,6 @@ import json
 import glob
 import os
 
-def read_noemail():
-  with open('results/result.noemail.json') as fh:
-    return json.load(fh)
-
 def _read_address(pattern, add_lookup_key):
   data = []
   for file in glob.glob(pattern):
