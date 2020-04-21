@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # set variables
-export NAME = elections-contacts
+export NAME = elections-officials
 
 create-install:
 	python3 -m venv venv
