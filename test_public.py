@@ -9,11 +9,18 @@ def publics():
   return glob.glob('public/*.json')
 
 class TestPublic(unittest.TestCase):
-  def assert_nonempty_string(self, x, allow_none=True, endswith=None):
+  def assert_nonempty_string(self, x, allow_none=True, endswith=None, stripped=True, titled=True):
     if allow_none and x is None:
       return
     self.assertIsInstance(x, str)
     self.assertIsNot(x, '')
+
+    if stripped:
+      self.assertEqual(x, x.strip())
+
+    if titled:
+      self.assertNotEqual(x, x.lower())
+      self.assertNotEqual(x, x.upper())
 
     if endswith:
       self.assertTrue(x.endswith(endswith))
@@ -36,7 +43,7 @@ class TestPublic(unittest.TestCase):
 
     for d in data:
       self.assert_nonempty_string(d.get('locale'), allow_none=False)
-      self.assert_nonempty_string(d.get('official'))
+      self.assert_nonempty_string(d.get('official'), titled=False)
 
       self.assert_nonempty_string(d.get('city'))
       self.assert_nonempty_string(d.get('county'), endswith=' County')

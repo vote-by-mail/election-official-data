@@ -10,9 +10,9 @@ def find_re(regex, lines, find_all=False):
     if isinstance(line, NavigableString):
       match = regex.search(line)
       if match and not find_all:
-        return match.group(1)
+        return match.group(1).strip()
       if match and find_all:
-        results += [match.group(1)]
+        results += [match.group(1).strip()]
   if find_all:
     return results
   else:
