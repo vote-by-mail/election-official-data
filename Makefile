@@ -19,5 +19,5 @@ jupyter:
 	source venv/bin/activate && jupyter notebook
 
 test:
-	source venv/bin/activate && jpython test_public.py
+	source venv/bin/activate && python test_public.py
 	
