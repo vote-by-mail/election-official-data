@@ -15,3 +15,9 @@ def cache_request(url, method='GET', data={}, wait=None):
   else:
     response = requests.request(method, url)
   return response.text
+
+def to_list(x):
+  if x:
+    return [x]
+  else:
+    return []

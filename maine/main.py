@@ -1,4 +1,4 @@
-from common import cache_request
+from common import cache_request, to_list
 import csv
 import json
 from io import StringIO
@@ -9,8 +9,8 @@ def record(datum):
     'city': datum[0],
     'official': datum[1],
     'address': datum[2:5],
-    'phones': [datum[5]],
-    'faxes': [datum[6]],
+    'phones': to_list(datum[5]),
+    'faxes': to_list(datum[6]),
   }
 
 if __name__ == '__main__':

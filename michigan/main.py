@@ -1,3 +1,4 @@
+from common import to_list
 import json
 
 def filter_dict_by_key(d, keys):
@@ -31,9 +32,9 @@ with open('michigan/cache/data.jl') as fh:
       'locale': value['city'] + ':' + county,
       'city': value['city'],
       'county': county,
-      'emails': [value['email']] if value['email'] else [],
-      'phones': [value['phone']] if value['email'] else [],
-      'faxes': [value['fax']],
+      'emails': to_list(value['email']),
+      'phones': to_list(value['phone']),
+      'faxes': to_list(value['fax']),
       'official': value['clerk'],
     }]
 

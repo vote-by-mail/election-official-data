@@ -31,6 +31,7 @@ class TestPublic(unittest.TestCase):
 
     self.assertIsInstance(l, list)
     self.assertTrue(all(isinstance(x, str) for x in l))
+    self.assertTrue(all(x for x in l))
 
 
   @parameterized.expand(publics)
