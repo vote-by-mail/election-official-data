@@ -91,14 +91,20 @@ def parse_county(iter_):
       'emails': emails,
     }
 
-  iter_.next_till('br')
-  official = iter_.next().strip()
+  while True:
+    el = iter_.next()
+    if isinstance(el, NavigableString):
+      if 'Clerk' in el or 'Registrar' in el:
+        official = el.strip().split(',')[0]
+        break
 
-  iter_.next_till('br')
-  address1 = iter_.next().strip()
-
-  iter_.next_till('br')
-  address2 = iter_.next().strip()
+  address = []
+  while True:
+    el = iter_.next()
+    if isinstance(el, NavigableString):
+      address += [el.strip()]
+      if re.search(r'Nevada \d{5}', el) or re.search(r'NV \d{5}', el):
+        break
 
   iter_.next_till('br')
   numbers = iter_.next().strip()
@@ -111,7 +117,7 @@ def parse_county(iter_):
     **init,
     'locale': locale,
     'official': official,
-    'address': address1 + ',' + address2,
+    'address': ', '.join(address),
     'emails': emails,
     'url': url,
   }
