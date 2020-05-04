@@ -110,7 +110,7 @@ def parse_county(iter_):
   return {
     **init,
     'locale': locale,
-    'officla': official,
+    'official': official,
     'address': address1 + ',' + address2,
     'emails': emails,
     'url': url,
@@ -120,7 +120,7 @@ if __name__ == '__main__':
   # Actually this file: https://www.nvsos.gov/sos/elections/voters/county-clerk-contact-information
   # But it's behind a javascript test
   dir_path = os.path.dirname(os.path.realpath(__file__))
-  with open(dir_path + '/Nevada.htm') as fh:
+  with open(dir_path + '/cache/Nevada.htm') as fh:
     page = fh.read()
   soup = BeautifulSoup(page, 'lxml')
   ps = soup.select('div.content_area > p')
