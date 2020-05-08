@@ -42,7 +42,7 @@ def parse_county(county, datum):
 if __name__ == '__main__':
   text = cache_request('https://www.sos.state.mn.us/elections-voting/find-county-election-office/')
   soup = BeautifulSoup(text, 'lxml')
-  counties = soup.select('h2.contentpage-h2')
+  counties = soup.select('h2.contentpage-h2 a')
 
   data = []
   for county in counties:

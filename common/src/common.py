@@ -18,7 +18,7 @@ def key_namer(args, kwargs):
 
 work_dir = dir_path(__file__) + '/../../cache/'
 
-@checkpoint(key=key_namer, work_dir=work_dir, refresh=False)
+@checkpoint(key=key_namer, work_dir=work_dir)
 def cache_request(url, method='GET', data={}, wait=None):
   if wait is not None:
     time.sleep(wait)

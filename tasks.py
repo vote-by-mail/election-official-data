@@ -9,4 +9,5 @@ def collect(c, state):
   else:
     scripts = [f'states/{state}/main.py']
   for script in scripts:
+    print(f'Process {script}')
     c.run(f'. ./venv/bin/activate && python {script}')
