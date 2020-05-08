@@ -1,6 +1,7 @@
 import json
 import glob
 import os
+import re
 
 import pandas as pd
 import numpy as np
@@ -89,7 +90,14 @@ def main():
 
   def to_list(df):
     return df.apply(
-        lambda x: list(set(y for y in x if pd.notnull(y) if y != '')),
+        lambda row: list(set(
+          email.strip()
+          for cell in row
+          if pd.notnull(cell)
+          if cell
+          for email in re.split(';|,', cell)
+          if email
+        )),
         axis=1
     )
 

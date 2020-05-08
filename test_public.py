@@ -2,6 +2,7 @@
 import unittest
 import glob
 import json
+import re
 
 from parameterized import parameterized
 
@@ -9,7 +10,7 @@ def publics():
   return glob.glob('public/*.json')
 
 class TestPublic(unittest.TestCase):
-  def assert_nonempty_string(self, x, allow_none=True, endswith=None, stripped=True, titled=True):
+  def assert_nonempty_string(self, x, allow_none=True, re=None, stripped=True, titled=True):
     if allow_none and x is None:
       return
     self.assertIsInstance(x, str)
@@ -22,17 +23,21 @@ class TestPublic(unittest.TestCase):
       self.assertNotEqual(x, x.lower())
       self.assertNotEqual(x, x.upper())
 
-    if endswith:
-      self.assertTrue(x.endswith(endswith))
+    if re:
+      self.assertTrue(re.search(x))
 
-  def assert_string_list(self, l, allow_none=True):
+  def assert_string_list(self, l, allow_none=True, re=None):
     if allow_none and l is None:
       return
 
     self.assertIsInstance(l, list)
-    self.assertTrue(all(isinstance(x, str) for x in l))
-    self.assertTrue(all(x for x in l))
+    for x in l:
+      self.assertIsInstance(x, str)
 
+      if re:
+        self.assertTrue(re.search(x), f'"{x}" does not match regex "{re.pattern}"')
+      else:
+        self.assertTrue(x)
 
   @parameterized.expand(publics)
   def test_state(self, public_file):
@@ -47,9 +52,9 @@ class TestPublic(unittest.TestCase):
       self.assert_nonempty_string(d.get('official'), titled=False)
 
       self.assert_nonempty_string(d.get('city'))
-      self.assert_nonempty_string(d.get('county'), endswith=' County')
+      self.assert_nonempty_string(d.get('county'), re=re.compile(' County$'))
 
-      self.assert_string_list(d.get('emails'))
+      self.assert_string_list(d.get('emails'), re=re.compile('^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$'))
       self.assert_string_list(d.get('faxes'))
 
 if __name__ == '__main__':

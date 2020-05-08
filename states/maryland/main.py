@@ -4,7 +4,6 @@ import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
-
 def find_re(regex, lines, find_all=False):
   results = []
   for line in lines:
@@ -32,9 +31,9 @@ def find_hrefs(line):
   for line in lines:
     if isinstance(line, Tag) and line.name == 'a':
       if line['href'].startswith('mailto:'):
-        results['emails'] += [line['href'][7:]]
+        results['emails'] += [line['href'][7:].strip()]
       if email_re.search(line.text):  # someone uses http://bob@gmail.com style email
-        results['emails'] += [email_re.search(line.text).group(0)]
+        results['emails'] += [email_re.search(line.text).group(0).strip()]
       elif not line['href'].startswith('https://www.google.com/maps/dir/'):
         results['urls'] += [line['href']]
   return results
