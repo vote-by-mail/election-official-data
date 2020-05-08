@@ -49,15 +49,29 @@ if __name__ == '__main__':
     lines = [l for l in county.children]
     href_datum = find_hrefs(lines)
     url_datum = { 'url': href_datum['urls'][0] } if href_datum['urls'] else {}
+
+    geo = lines[0].text.strip()
+    if geo.endswith('City'):
+      geo_datum = {
+        'locale': geo + ':',
+        'city': geo,
+      }
+    else:  # for Baltimore
+      county = geo if geo.endswith(' County') else geo + ' County'
+      geo_datum = {
+        'locale': ':' + county,
+        'county': county,
+      }
+
     datum = {
-      'locale': lines[0].text + ' County',
-      'county': lines[0].text + ' County',
+      **geo_datum,
       'official': find_re(election_director_re, lines),
       'phones': find_re(phone_re, lines, find_all=True),
       'faxs': [find_re(fax_re, lines)],
       **url_datum,
       **href_datum,
     }
+
     assert(datum['emails'])
     data += [datum]
 
