@@ -35,7 +35,7 @@ class TestPublic(unittest.TestCase):
       self.assertIsInstance(x, str)
 
       if re:
-        self.assertTrue(re.search(x), f'"{x}" does not match regex "{re.pattern}"')
+        self.assertEqual(len(re.findall(x)), 1, f'"{x}" does not match regex "{re.pattern}"')
       else:
         self.assertTrue(x)
 
@@ -54,8 +54,14 @@ class TestPublic(unittest.TestCase):
       self.assert_nonempty_string(d.get('city'))
       self.assert_nonempty_string(d.get('county'), re=re.compile(' County$'))
 
-      self.assert_string_list(d.get('emails'), re=re.compile('^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$'))
-      self.assert_string_list(d.get('faxes'))
+      self.assert_string_list(
+        d.get('emails'),
+        re=re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
+      )
+      self.assert_string_list(
+        d.get('faxes'),
+        re=re.compile(r'\D*1?\D*\d{3}\D*\d{3}\D*\d{4}\D*')
+      )
 
 if __name__ == '__main__':
   unittest.main()
