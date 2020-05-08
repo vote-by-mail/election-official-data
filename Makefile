@@ -20,4 +20,3 @@ jupyter:
 
 test:
 	source venv/bin/activate && python test_public.py
-	

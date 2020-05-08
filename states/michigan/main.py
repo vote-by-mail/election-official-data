@@ -1,13 +1,16 @@
 from common import to_list
 import json
 
+from common import dir_path
+
+
 def filter_dict_by_key(d, keys):
   keys = set(keys)
   return { k: v for k, v in d.items() if k in keys}
 
 output = []
 
-with open('michigan/cache/data.jl') as fh:
+with open(dir_path(__file__) + '/cache/data.jl') as fh:
   for line in fh:
     data = json.loads(line)
 

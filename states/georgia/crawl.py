@@ -1,3 +1,5 @@
+from common import dir_path
+
 from selenium import webdriver
 import time
 import random
@@ -19,12 +21,13 @@ def scrape_county_html():
 def go_back():
   driver.find_element_by_xpath("//input[@name='SubmitBack']").click()
 
+_dir = dir_path(__file__)
+
 def save_html(i, html):
-  with open(f'georgia/cache/result.{i}.html', 'w') as fh:
+  with open(f'{_dir}/cache/result.{i}.html', 'w') as fh:
     fh.write(html)
 
-
-if __name__ == '__main__':
+def main():
   options = webdriver.ChromeOptions()
   options.add_argument('headless')
   driver = webdriver.Chrome(options=options)
@@ -48,3 +51,7 @@ if __name__ == '__main__':
     i += 1
 
   driver.close()
+
+
+if __name__ == '__main__':
+  main()

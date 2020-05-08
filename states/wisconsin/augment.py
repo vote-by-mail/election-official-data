@@ -3,6 +3,8 @@ import json
 from tqdm import tqdm
 import requests
 
+from common import dir_path
+
 URL = 'https://myvote.wi.gov/DesktopModules/GabMyVoteModules/api/WhereDoIVote/SearchPollingPlace'
 
 def fetch_clerk_results(address):
@@ -28,8 +30,8 @@ def save_data(address, file_name):
   with open(file_name, 'w') as fh:
     json.dump(data, fh)
 
-if __name__ == '__main__':
-  with open('results/records.noemail.json') as fh:
+def main():
+  with open(dir_path(__file__) + '/results/records.noemail.json') as fh:
     records = json.load(fh)
 
   for record in tqdm(records[:None]):
@@ -37,13 +39,16 @@ if __name__ == '__main__':
     if record['municipal_address']:
       save_data(
         record['municipal_address'],
-        f'results/municipal_address/{key}.json',
+        dir_path(__file__) + f'/results/municipal_address/{key}.json',
       )
 
     if record['mailing_address']:
       save_data(
         record['mailing_address'],
-        f'results/mailing_address/{key}.json',
+        dir_path(__file__) + f'/results/mailing_address/{key}.json',
       )
 
     # Really care about ['Data']['clerk']
+
+if __name__ == '__main__':
+  main()

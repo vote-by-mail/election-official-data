@@ -4,7 +4,12 @@ import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
-files = glob('georgia/cache/*.html')
+
+from common import dir_path
+
+_dir = dir_path(__file__)
+
+files = glob(f'{_dir}/cache/*.html')
 
 def parse_addr_line(key, line):
   if not isinstance(line, NavigableString):
@@ -68,9 +73,13 @@ def parse_html(file):
     'contacts': contacts_dict,
   }
 
-if __name__ == '__main__':
+def main():
   js = [parse_html(file) for file in files]
   print(F'Found {len(js)} records')
 
   with open('public/georgia.json', 'w') as fh:
     json.dump(js, fh)
+
+
+if __name__ == '__main__':
+  main()

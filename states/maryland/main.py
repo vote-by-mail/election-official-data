@@ -4,6 +4,7 @@ import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
+
 def find_re(regex, lines, find_all=False):
   results = []
   for line in lines:

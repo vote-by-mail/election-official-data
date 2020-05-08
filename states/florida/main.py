@@ -1,7 +1,11 @@
 import json
 import glob
+import os
 
-files = glob.glob('florida/cache/*.json')
+from common import dir_path
+
+
+files = glob.glob(dir_path(__file__) + '/cache/*.json')
 data = []
 print(f'Found {len(files)} files')
 for file in files:

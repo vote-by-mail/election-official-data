@@ -1,12 +1,24 @@
+import os
 import requests
+import argparse
 import time
+import hashlib
+
 from ediblepickle import checkpoint
+
+
+def dir_path(_file_):
+  return os.path.dirname(os.path.realpath(_file_))
+
+sha256 = lambda x: hashlib.sha256(x.encode('utf8')).hexdigest()
 
 def key_namer(args, kwargs):
   wait_free = { k: v for k, v in kwargs.items() if k != 'wait' }
-  return str(abs(hash(str(args) + str(wait_free)))) + '.pkl'
+  return sha256(str(args) + str(wait_free)) + '.pkl'
 
-@checkpoint(key=key_namer, work_dir='cache')
+work_dir = dir_path(__file__) + '/../../cache/'
+
+@checkpoint(key=key_namer, work_dir=work_dir, refresh=False)
 def cache_request(url, method='GET', data={}, wait=None):
   if wait is not None:
     time.sleep(wait)
@@ -21,3 +33,8 @@ def to_list(x):
     return [x]
   else:
     return []
+
+def arg_parser():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--crawl", action="store_true")
+  return parser.parse_args()

@@ -1,9 +1,10 @@
-from common import cache_request
 import json
 import os
 import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
+
+from common import cache_request, dir_path
 
 
 def is_element(el, tag):
@@ -125,8 +126,7 @@ def parse_county(iter_):
 if __name__ == '__main__':
   # Actually this file: https://www.nvsos.gov/sos/elections/voters/county-clerk-contact-information
   # But it's behind a javascript test
-  dir_path = os.path.dirname(os.path.realpath(__file__))
-  with open(dir_path + '/cache/Nevada.htm') as fh:
+  with open(dir_path(__file__) + '/cache/Nevada.htm') as fh:
     page = fh.read()
   soup = BeautifulSoup(page, 'lxml')
   ps = soup.select('div.content_area > p')

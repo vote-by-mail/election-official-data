@@ -3,6 +3,9 @@ import re
 import json
 from tqdm import tqdm
 
+
+from common import dir_path
+
 city_start_re = re.compile('^(CITY|TOWN|VILLAGE) OF')
 end_page_re = re.compile('^Page \d+ of 360$')
 
@@ -62,8 +65,8 @@ def parse_city_lines(lines):
 
   return { k: strip_newline(v) if isinstance(v, str) else v for k, v in ret.items() }
 
-if __name__ == '__main__':
-  with open('results/WI Municipal Clerks no emails Updated 3-23-2020.pdf', 'rb') as fh:
+def main():
+  with open(dir_path(__file__) + '/results/WI Municipal Clerks no emails Updated 3-23-2020.pdf', 'rb') as fh:
     pdf_reader = PyPDF2.PdfFileReader(fh)
     # full_text = [pdf_reader.getPage(page).extractText() for page in range(pdf_reader.numPages)]
     records = []
@@ -72,5 +75,9 @@ if __name__ == '__main__':
       for city_lines in chunk_city(text):
         records += [parse_city_lines(city_lines)]
 
-  with open('results/records.noemail.json', 'w') as fh:
+  with open(dir_path(__file__) + '/results/records.noemail.json', 'w') as fh:
     json.dump(records, fh)
+
+
+if __name__ == '__main__':
+  main()
