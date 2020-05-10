@@ -18,10 +18,10 @@ def find_re(regex, lines, find_all=False):
   else:
     return None
 
-phone_re = re.compile('(\d{3}-\d{3}-\d{4})$')
-fax_re = re.compile('(\d{3}-\d{3}-\d{4}) \(Fax\)')
+phone_re = re.compile(r'(\d{3}-\d{3}-\d{4})$')
+fax_re = re.compile(r'(\d{3}-\d{3}-\d{4}) \(fax', re.IGNORECASE)
 email_re = re.compile(r'[\w\-.]+@([\w\-]+\.)+[\w\-]{2,4}')
-election_director_re = re.compile('(.*), Election Director')
+election_director_re = re.compile(r'(.*),\w+Election Director')
 
 def find_hrefs(line):
   results = {
@@ -67,12 +67,13 @@ if __name__ == '__main__':
       **geo_datum,
       'official': find_re(election_director_re, lines),
       'phones': find_re(phone_re, lines, find_all=True),
-      'faxs': [find_re(fax_re, lines)],
+      'faxes': [find_re(fax_re, lines)],
       **url_datum,
       **href_datum,
     }
 
     assert(datum['emails'])
+    assert(find_re(fax_re, lines))
     data += [datum]
 
   with open('public/maryland.json', 'w') as fh:

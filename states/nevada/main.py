@@ -107,8 +107,23 @@ def parse_county(iter_):
       if re.search(r'Nevada \d{5}', el) or re.search(r'NV \d{5}', el):
         break
 
-  iter_.next_till('br')
-  numbers = iter_.next().strip()
+  el = iter_.next()
+  el = iter_.next()
+  if isinstance(el, NavigableString):
+    el = el.replace(u'\xa0', ' ')  # replace non-breaking space
+    matches1 = re.search(r'(\(\d{3}\) \d{3}-\d{4}) FAX (\(\d{3}\) \d{3}-\d{4})', el)
+    matches2 = re.search(r'(\(\d{3}\) \d{3}-VOTE \(\d{4}\)) FAX (\(\d{3}\) \d{3}-\d{4})', el)
+    if matches1:
+      phone = matches1.group(1)
+      fax = matches1.group(2)
+    elif matches2:
+      phone = matches2.group(1)
+      fax = matches2.group(2)
+    else:
+      print(county_title)
+      print(el)
+      print(re.search(r'(\(\d{3}\) \d{3}-\d{4}) FAX', el))
+      assert(Fasle)
 
   emails, url  = parse_emails_url(iter_)
 
@@ -120,6 +135,8 @@ def parse_county(iter_):
     'official': official,
     'address': ', '.join(address),
     'emails': emails,
+    'phones': [phone],
+    'faxes': [fax],
     'url': url,
   }
 
