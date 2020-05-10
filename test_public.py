@@ -31,6 +31,7 @@ class TestPublic(unittest.TestCase):
       return
 
     self.assertIsInstance(l, list)
+    self.assertEqual(len(l), len(set(l)))
     for x in l:
       self.assertIsInstance(x, str)
 

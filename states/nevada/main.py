@@ -134,7 +134,7 @@ def parse_county(iter_):
     'locale': locale,
     'official': official,
     'address': ', '.join(address),
-    'emails': emails,
+    'emails': list(set(emails)),
     'phones': [phone],
     'faxes': [fax],
     'url': url,
