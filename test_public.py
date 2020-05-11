@@ -10,7 +10,7 @@ def publics():
   return glob.glob('public/*.json')
 
 class TestPublic(unittest.TestCase):
-  def assert_nonempty_string(self, x, allow_none=True, re=None, stripped=True, titled=True):
+  def assert_nonempty_string(self, x, allow_none=True, regex=None, stripped=True, titled=True):
     if allow_none and x is None:
       return
     self.assertIsInstance(x, str)
@@ -23,10 +23,10 @@ class TestPublic(unittest.TestCase):
       self.assertNotEqual(x, x.lower())
       self.assertNotEqual(x, x.upper())
 
-    if re:
-      self.assertTrue(re.search(x))
+    if regex:
+      self.assertTrue(regex.search(x))
 
-  def assert_string_list(self, l, allow_none=True, re=None):
+  def assert_string_list(self, l, allow_none=True, regex=None):
     if allow_none and l is None:
       return
 
@@ -35,8 +35,8 @@ class TestPublic(unittest.TestCase):
     for x in l:
       self.assertIsInstance(x, str)
 
-      if re:
-        self.assertEqual(len(re.findall(x)), 1, f'"{x}" does not match regex "{re.pattern}"')
+      if regex:
+        self.assertTrue(regex.search(x), f'"{x}" does not match regex "{regex.pattern}"')
       else:
         self.assertTrue(x)
 
@@ -53,15 +53,15 @@ class TestPublic(unittest.TestCase):
       self.assert_nonempty_string(d.get('official'), titled=False)
 
       self.assert_nonempty_string(d.get('city'))
-      self.assert_nonempty_string(d.get('county'), re=re.compile(' County$'))
+      self.assert_nonempty_string(d.get('county'), regex=re.compile(' County$'))
 
       self.assert_string_list(
         d.get('emails'),
-        re=re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
+        regex=re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
       )
       self.assert_string_list(
         d.get('faxes'),
-        re=re.compile(r'\D*1?\D*\d{3}\D*\d{3}\D*\d{4}\D*')
+        regex=re.compile(r'^\D*1?\D*\d{3}\D*\d{3}\D*\d{4}\D*$')
       )
 
 if __name__ == '__main__':
