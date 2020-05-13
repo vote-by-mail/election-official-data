@@ -1,6 +1,11 @@
 # Election Contacts
 This repo collects information by locale (county or town) from critical swing states for [MailMyBallot.org](https://mailmyballot.org).  Code for each state is under the state's name.
 
+## Getting Started
+To get started, run the `make create-install` command.  There are other useful commands there.
+
+The real work is done by [PyInvoke](http://www.pyinvoke.org/), a simple task runner which was installed by the previous command.
+
 ## Format
 Data is saved in the `/public` folder by state (e.g. `florida.json`).  Each file is a json array of all election-official contacts for locale.  The format of the contacts depends on the state but supports (at a minimum) the following `typescript` interface
 ``` ts
