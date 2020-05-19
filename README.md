@@ -54,7 +54,8 @@ interface Contact {
 - County Clerk List ([PDF](https://elections.wi.gov/sites/elections.wi.gov/files/2020-03/WI%20County%20Clerks%20no%20emails%20Updated%203-23-2020.pdf))
 
 ## Usage
-To get started, look at the `Makefile`.
+- To get started, look at the `Makefile`.  You can install files, startup Jupyter, etc ...
+- To run tasks, we use [PyInvoke](http://www.pyinvoke.org/).  Look at `tasks.py` file
 
 ## About Us
 This repository is for [MailMyBallot.org](https://mailmyballot.org), a [National Vote at Home Institute](https://voteathome.org) project.
