@@ -60,5 +60,5 @@ if __name__ == '__main__':
     text = cache_request(county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  with open('public/newyork.json', 'w') as f:
+  with open('public/new_york.json', 'w') as f:
     json.dump(data, f)
