@@ -6,26 +6,41 @@ To get started, run the `make create-install` command.  There are other useful c
 
 The real work is done by [PyInvoke](http://www.pyinvoke.org/), a simple task runner which was installed by the previous command.
 
-## Format
+## Data Format
 Data is saved in the `/public` folder by state (e.g. `florida.json`).  Each file is a json array of all election-official contacts for locale.  The format of the contacts depends on the state but supports (at a minimum) the following `typescript` interface
 ``` ts
 interface Contact {
-  // each contact should have a locale and either an email or fax
+  // each contact should have a locale and either a county or city
+  // it should also have either an email or fax and preferably the county official's name.
   locale: string            // locale name, unique within state
+  county?: string           // county name
+  city?: string             // city or township name
   official?: string         // name of election's official
   emails?: string[]         // array of emails
   faxes?: string[]          // list of fax numbers
 
   // optional fields
   phones?: string[]         // list of phone numbers
-  county?: string           // county name
-  city?: string             // city or township name
   url?: string              // url for locale's election information
   address?: string          // mailing address data
   physicalAddress?: string  // physical address 
   party?: string            // party affiliation of official
 }
 ``` 
+
+## Adding a New State
+Each state's crawler is put under it's own folder (e.g. `states/new_york/main.py`) with potentially other files in the folder.
+- We use `cache_request` to reqeust webpages so that the results are saved to a local cache for faster development.
+- You can invoke the file using PyInvoke, i.e. 
+
+  ```inv collect new_york```
+
+- The results are then saved in the above [json format](#Data_Format).
+- Once you have the data, verify that it works by runnin tests:
+
+  ```make test```
+
+- Also, rerun the Jupyter notebook `analysis/Analysis.ipynb` from scratch to update the analytics.  You can see how many fields you were able to parse.  To start the jupyter notebook, run `make jupyter`.  Open the file in the resulting jupyter server and rerun it from scratch (click "Kernel" > "Restart & Run All").  Save the notebook after the run completes before committing it.
 
 ## Some State-Specific Information
 
