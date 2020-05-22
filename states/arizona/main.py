@@ -14,13 +14,13 @@ re_fax_line = re.compile(r'Fax\s*-?\s*(1?\D*\d{3}\D*\d{3}\D*\d{4})\D*\n')
 re_phone = re.compile(r'(\d{3}\D*\d{3}\D*\d{4})')
 
 def decode_email(e):
-    de = ""
-    k = int(e[:2], 16)
+  de = ""
+  k = int(e[:2], 16)
 
-    for i in range(2, len(e)-1, 2):
-        de += chr(int(e[i:i+2], 16)^k)
+  for i in range(2, len(e)-1, 2):
+    de += chr(int(e[i:i+2], 16)^k)
 
-    return de
+  return de
 
 def parse_county(soup):
   results = {}
@@ -32,21 +32,21 @@ def parse_county(soup):
   results['phones'] = list(set(re_phone.findall(' '.join(phone_lines))))
   fax_lines = re_fax_line.findall(text)
   results['faxes'] = list(set(re_phone.findall(' '.join(fax_lines))))
-  
+
   results['url'] = soup.select('a[href^=http]')[0].get('href').strip()
   emails = [decode_email(x.get('data-cfemail')) for x in soup.find_all('span', class_='__cf_email__')]
   results['emails'] = [emails[-1]] #last email on page is typically for vote by mail
   for email in emails:
     if email not in results['emails']:
       results['emails'].append(email)
-  
+
   # use County Recorder as the primary official since they handle voter registration
   recorder = (re_recorder.search(text) or re_recorder2.search(text)).groupdict()
   results['official'] = recorder['recorder']
   results['officialTitle'] = 'County Recorder'
   results['address'] = recorder['full_address'] if recorder.get('full_address') else recorder['mailing'] + '\n' + recorder['city_state_zip']
   results['physicalAddress'] = recorder['full_address'] if recorder.get('full_address') else recorder['physical'] + '\n' + recorder['city_state_zip']
-  
+
   # save info for County Elections Director as well
   director = (re_director.search(text) or re_director2.search(text)).groupdict()
   results['other_officials'] = [{'name': director['director'],
