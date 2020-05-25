@@ -1,4 +1,4 @@
-from common import cache_request, to_list
+from common import cache_request, decode_email
 import json
 import re
 from bs4 import BeautifulSoup
@@ -13,15 +13,6 @@ re_phone_line = re_phone = re.compile(r'Phone\s*-?\s*(.*)\n')
 re_fax_line = re.compile(r'Fax\s*-?\s*(1?\D*\d{3}\D*\d{3}\D*\d{4})\D*\n')
 re_phone = re.compile(r'(\d{3}\D*\d{3}\D*\d{4})')
 
-def decode_email(e):
-  de = ""
-  k = int(e[:2], 16)
-
-  for i in range(2, len(e)-1, 2):
-    de += chr(int(e[i:i+2], 16)^k)
-
-  return de
-
 def parse_county(soup):
   results = {}
   results['county'] = soup.find('h2').text
@@ -29,16 +20,13 @@ def parse_county(soup):
 
   text = re_extra_spaces.sub(' ', soup.get_text('\n')).replace('\n\n','\n')
   phone_lines = re_phone_line.findall(text)
-  results['phones'] = list(set(re_phone.findall(' '.join(phone_lines))))
+  results['phones'] = sorted(set(re_phone.findall(' '.join(phone_lines))))
   fax_lines = re_fax_line.findall(text)
-  results['faxes'] = list(set(re_phone.findall(' '.join(fax_lines))))
+  results['faxes'] = sorted(set(re_phone.findall(' '.join(fax_lines))))
 
   results['url'] = soup.select('a[href^=http]')[0].get('href').strip()
   emails = [decode_email(x.get('data-cfemail')) for x in soup.find_all('span', class_='__cf_email__')]
-  results['emails'] = [emails[-1]] #last email on page is typically for vote by mail
-  for email in emails:
-    if email not in results['emails']:
-      results['emails'].append(email)
+  results['emails'] = sorted(set(emails))
 
   # use County Recorder as the primary official since they handle voter registration
   recorder = (re_recorder.search(text) or re_recorder2.search(text)).groupdict()
