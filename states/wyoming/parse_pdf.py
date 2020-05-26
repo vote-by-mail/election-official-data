@@ -8,7 +8,7 @@ from io import BytesIO
 import re
 import sys
 
-# link to data: https://sos.wyo.gov/Elections/Docs/WYCountyClerks_AbsRequest_VRChange.pdf 
+# link to data: https://sos.wyo.gov/Elections/Docs/WYCountyClerks_AbsRequest_VRChange.pdf
 
 email_suffixes = ['.us', '.gov', '.net', '.com', '.org']
 
@@ -54,11 +54,11 @@ def group_rows(lines):
 
 def group_counties(rows):
   formatted_rows = []
-  
+
   for row in rows:
     first_county = defaultdict(list)
     first_county['title'] = row[0]
-    
+
     second_county = defaultdict(list)
     # Last row only has one county.
     if 'County Clerk' in row[1]:
@@ -85,7 +85,7 @@ def group_counties(rows):
         key = 'email'
       else:
         # Need to make sure following line doesn't have email suffix, too.
-        if (email_section and 
+        if (email_section and
             not any(suffix in line for suffix in email_suffixes) and
             not any(suffix in row[i + 1] for suffix in email_suffixes)):
           current_county = second_county
@@ -153,16 +153,18 @@ def generate_county_dict_list(formatted_rows):
     for fax_line in formatted_row['fax']:
       fax_line = fax_line.strip('Fax ')
       county['faxes'].append(fax_line.replace('.', '-'))
-      
+
     counties.append(county)
 
   return counties
 
 
 def main():
-  with BytesIO(cache_request(
+  req = cache_request(
     "https://sos.wyo.gov/Elections/Docs/WYCountyClerks_AbsRequest_VRChange.pdf",
-    is_binary=True)) as fh:
+    is_binary=True
+  )
+  with BytesIO(req) as fh:
     pdf_reader = PyPDF2.PdfFileReader(fh)
     text = ''
     for page_num in tqdm(range(pdf_reader.numPages)):
