@@ -56,6 +56,8 @@ Each state's crawler is put under it's own folder (e.g. `states/new_york/main.py
 - They seem to accept email applications [Election Official's Manual](https://www.michigan.gov/documents/sos/VI_Michigans_Absentee_Voting_Process_265992_7.pdf)
 - "Michigan residents who live in unincorporated places register to vote with their township clerk": [MI SOS](https://www.michigan.gov/documents/sos/ED-106_Circulating_CityTwp_Nom_+_Qual_Pet_Forms_647901_7.pdf)
 - The City-type matters: there is a St. Joseph Township and City, both in Berrien County.  They share a zipcode (Wikipedia [Township](https://en.wikipedia.org/wiki/St._Joseph_Charter_Township,_Michigan), [City](https://en.wikipedia.org/wiki/St._Joseph,_Michigan))
+- The following Address is in Olive Township, not West Olive: "12220 Fillmore Street, Room 130 West Olive, MI 49460".
+- There is both a [Sheridan Chatter Township](https://www.google.com/maps/place/Sheridan+Charter+Twp,+MI+49412/@43.4237592,-87.1002624,8z/data=!4m5!3m4!1s0x881941cfc5fb3d8f:0x28cee802764453b8!8m2!3d43.4229492!4d-85.9815339) as well as a [Sheridan Township](https://www.google.com/maps/place/Sheridan+Township,+MI+49224/@42.2906076,-87.0140035,7z/data=!4m5!3m4!1s0x883d50194df74c53:0x5d349c5515a24204!8m2!3d42.295598!4d-84.7942091), which are quite far apart.  Similarly for Caledonia, Shelby, Lincoln, Lake, and Benton.
 
 ### Georgia
 - Contact info for county board of registrars offices [website](https://elections.sos.ga.gov/Elections/countyregistrars.do).
