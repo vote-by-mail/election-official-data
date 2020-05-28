@@ -1,8 +1,7 @@
-from common import cache_request, decode_email
-import json
+from common import cache_request, decode_email, diff_and_save
 import re
 from bs4 import BeautifulSoup
-from functools import reduce
+
 
 re_extra_spaces = re.compile(r'[^\S\n]+')
 re_recorder = re.compile(r'(?P<recorder>\S.*\S)\s*\n.*County Recorder\s*Physical:\s*(?P<physical>\S.*\S)\s*Mailing:\s*(?P<mailing>\S.*\S)\s*(?P<city_state_zip>\S.*\d{5}(-\d+)?)', flags=re.MULTILINE)
@@ -58,5 +57,6 @@ if __name__ == '__main__':
     if county.find('h2'): #there are extra blank divs
       data.append(parse_county(county))
 
-  with open('public/arizona.json', 'w') as f:
-    json.dump(data, f)
+  # sort by locale for consistent ordering
+  data.sort(key=lambda x: x['locale'])
+  diff_and_save(data, 'public/arizona.json')

@@ -18,18 +18,14 @@ def parse_county(soup):
 
 if __name__ == '__main__':
   data = []
-
   text = cache_request(BASE_URL)
   soup = BeautifulSoup(text, 'html.parser')
 
-  # links to county pages
   county_links = map(lambda x: x['href'], soup.select('a[href^=countyInfo]'))
   for county_link in county_links:
     text = cache_request(BASE_URL+county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
-  print("Florida # of counties: {}".format(len(data)))
 
   # sort by locale for consistent ordering
   data.sort(key=lambda x: x['locale'])
-
   diff_and_save(data, 'public/florida.json')

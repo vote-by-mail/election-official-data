@@ -1,7 +1,7 @@
-from common import cache_request, to_list
-import json
+from common import cache_request, to_list, diff_and_save
 import re
 from bs4 import BeautifulSoup
+
 
 re_extra_spaces = re.compile(r'[^\S\n]+')
 re_locale_address = re.compile(r'(?P<locale>\S([^\S\n]|\w)*\s*County)\s*Board of Elections\s*(?P<address>\S.*\d{5}(-\d+)?)\s*', flags=re.MULTILINE+re.DOTALL)
@@ -28,7 +28,7 @@ def parse_county(soup):
     results['faxes'] += re_phone.findall(fax_line)
 
   # emails
-  results['emails'] = list(set(i.get('href').replace('mailto:','').strip() for i in blocks[0].select('a[href^=mailto]')))
+  results['emails'] = sorted(set(i.get('href').replace('mailto:','').strip() for i in blocks[0].select('a[href^=mailto]')))
   results['emails'] = list(filter(lambda x: not x.startswith('http'), results['emails'])) # Erie county apparently only uses a web form
 
   # county elections url
@@ -51,7 +51,6 @@ def parse_county(soup):
 
 if __name__ == '__main__':
   data = []
-
   text = cache_request('https://www.elections.ny.gov/CountyBoards.html')
   soup = BeautifulSoup(text, 'html.parser')
 
@@ -60,5 +59,6 @@ if __name__ == '__main__':
     text = cache_request(county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  with open('public/new_york.json', 'w') as f:
-    json.dump(data, f)
+  # sort by locale for consistent ordering
+  data.sort(key=lambda x: x['locale'])
+  diff_and_save(data, 'public/new_york.json')
