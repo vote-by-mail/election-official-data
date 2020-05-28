@@ -58,7 +58,7 @@ def decode_email(e):
 
   return de
 
-def diff_and_save(data, fname):
+def diff_and_save(data, fname, verbose=True):
   # compare with old data (if exists)
   if os.path.exists(fname):
     with open(fname, 'r') as f:
@@ -66,6 +66,8 @@ def diff_and_save(data, fname):
   else:
     old_data = None
   diff = DeepDiff(old_data, data)
+  if verbose:
+    print(f"Diff '{fname}': {diff}")
 
   # save new data
   with open(fname, 'w') as f:
