@@ -6,25 +6,14 @@ BASE_URL = 'https://dos.elections.myflorida.com/supervisors/'
 
 
 def parse_county(soup, county_link):
-  # step 1: scrape raw county data
-  # (originally used artoo and saved in individual json files)
   datum = {}
-  datum['county'] = county_link.split('=')[1]
-  datum['name'] = soup.find('span', class_='bigRed').text
-  datum['title'] = soup.find('p', class_='title').text
+  datum['locale'] = soup.find('p', class_='title').text.split('Supervisor')[0].strip()
+  datum['official'] = soup.find('span', class_='bigRed').text.replace(u'\xa0', ' ').split(',')[0].strip()
   links = soup.find(id='rightContent')('a')
-  datum['email'] = decode_email(links[0].find('span', class_='__cf_email__').get('data-cfemail'))
-  datum['url'] = links[1]['href']
-
-  # step 2: parse raw scraped county data
-  county = datum['title'].split('Supervisor')[0].strip()
-  return {
-    'locale': county,
-    'official': datum['name'].replace(u'\xa0', ' ').split(',')[0].strip(),
-    'emails': [datum['email'].strip()], # no longer need to strip mailto:
-    'url': datum['url'],
-    'county': county,
-  }
+  datum['emails'] = [decode_email(links[0].find('span', class_='__cf_email__').get('data-cfemail')).strip()]
+  datum['url'] = links[1]['href'].strip()
+  datum['county'] = datum['locale']
+  return datum
 
 if __name__ == '__main__':
   data = []
