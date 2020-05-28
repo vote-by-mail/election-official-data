@@ -1,9 +1,9 @@
-import json
 from bs4 import BeautifulSoup
+
+from common import dir_path, cache_request, decode_email, diff_and_save
 
 BASE_URL = 'https://dos.elections.myflorida.com/supervisors/'
 
-from common import dir_path, cache_request, decode_email
 
 def parse_county(soup, county_link):
   # step 1: scrape raw county data
@@ -15,7 +15,7 @@ def parse_county(soup, county_link):
   links = soup.find(id='rightContent')('a')
   datum['email'] = decode_email(links[0].find('span', class_='__cf_email__').get('data-cfemail'))
   datum['url'] = links[1]['href']
-  
+
   # step 2: parse raw scraped county data
   county = datum['title'].split('Supervisor')[0].strip()
   return {
@@ -37,11 +37,10 @@ if __name__ == '__main__':
   for county_link in county_links:
     text = cache_request(BASE_URL+county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser'), county_link))
-
-  print("Found {} counties for Florida.".format(len(data)))
+  print("Florida # of counties: {}".format(len(data)))
 
   # sort by locale for consistent ordering
   data.sort(key=lambda x: x['locale'])
-  
-  with open('public/florida.json', 'w') as fh:
-    json.dump(data, fh)
+
+  diff = diff_and_save(data, 'public/florida.json')
+  print("Florida diff: {}".format(diff))

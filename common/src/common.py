@@ -3,8 +3,10 @@ import requests
 import argparse
 import time
 import hashlib
+import json
 
 from ediblepickle import checkpoint
+from deepdiff import DeepDiff
 
 
 def dir_path(_file_):
@@ -55,3 +57,18 @@ def decode_email(e):
     de += chr(int(e[i:i+2], 16)^k)
 
   return de
+
+def diff_and_save(data, fname):
+  # compare with old data (if exists)
+  if os.path.exists(fname):
+    with open(fname, 'r') as f:
+      old_data = json.load(f)
+  else:
+    old_data = None
+  diff = DeepDiff(old_data, data)
+
+  # save new data
+  with open(fname, 'w') as f:
+    json.dump(data, f)
+
+  return diff
