@@ -54,9 +54,9 @@ if __name__ == '__main__':
   text = cache_request('https://www.elections.ny.gov/CountyBoards.html')
   soup = BeautifulSoup(text, 'html.parser')
 
-  # links to county pages are in a map
   for county_area in soup.find_all('area'):
-    text = cache_request(county_area['href'])
+    county_link = county_area['href']
+    text = cache_request(county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   # sort by locale for consistent ordering
