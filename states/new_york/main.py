@@ -55,8 +55,8 @@ if __name__ == '__main__':
   soup = BeautifulSoup(text, 'html.parser')
 
   # links to county pages are in a map
-  for county_link in [area['href'] for area in soup.find_all('area')]:
-    text = cache_request(county_link)
+  for county_area in soup.find_all('area'):
+    text = cache_request(county_area['href'])
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   # sort by locale for consistent ordering
