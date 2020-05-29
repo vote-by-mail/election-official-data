@@ -40,7 +40,7 @@ Each state's crawler is put under it's own folder (e.g. `states/new_york/main.py
 
   ```make test```
 
-- Also, rerun the Jupyter notebook `analysis/Analysis.ipynb` from scratch to update the analytics.  You can see how many fields you were able to parse.  To start the jupyter notebook, run `make jupyter`.  Open the file in the resulting jupyter server and rerun it from scratch (click "Kernel" > "Restart & Run All").  Save the notebook after the run completes before committing it.
+- Also, rerun the Jupyter notebook `analysis/Analysis.ipynb` from scratch to update the analytics.  You can see how many fields you were able to parse.  To start the jupyter notebook, run `make jupyter`.  Run the notebook.  Make sure that you have all the values you need.  **Do not commit thie notebook changes**.  Jsut throw them away.  They just block rebase merging.
 
 ## Some State-Specific Information
 
