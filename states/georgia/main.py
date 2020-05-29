@@ -74,10 +74,9 @@ if __name__ == '__main__':
   data = []
   text = cache_request(LIST_URL)
   soup = BeautifulSoup(text, 'html.parser')
-  county_ids = map(lambda x: x['value'], soup.find(id='idTown')('option'))
-  for county_id in county_ids:
+  for county in soup.find(id='idTown')('option'):
     wait = random.uniform(1, 3)
-    text = cache_request(DETAIL_URL, method='POST', data={'idTown': county_id, 'contactType': 'R'}, wait=wait)
+    text = cache_request(DETAIL_URL, method='POST', data={'idTown': county['value'], 'contactType': 'R'}, wait=wait)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   # sort by locale for consistent ordering
