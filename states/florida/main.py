@@ -20,10 +20,8 @@ if __name__ == '__main__':
   data = []
   text = cache_request(BASE_URL)
   soup = BeautifulSoup(text, 'html.parser')
-
-  county_links = map(lambda x: x['href'], soup.select('a[href^=countyInfo]'))
-  for county_link in county_links:
-    text = cache_request(BASE_URL+county_link)
+  for county_link in soup.select('a[href^=countyInfo]'):
+    text = cache_request(BASE_URL+county_link['href'])
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   # sort by locale for consistent ordering
