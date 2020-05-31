@@ -42,6 +42,11 @@ Each state's crawler is put under it's own folder (e.g. `states/new_york/main.py
 
 - Also, rerun the Jupyter notebook `analysis/Analysis.ipynb` from scratch to update the analytics.  You can see how many fields you were able to parse.  To start the jupyter notebook, run `make jupyter`.  Run the notebook.  Make sure that you have all the values you need.  **Do not commit the notebook changes**.  Jsut throw them away.  They just block rebase merging.
 
+## Notes on Submitting Code
+Please submit code via pull requests, ideally from this repo if you have access or from your own fork if you do not.
+- We strive to only use [rebase merges](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
+- Please don't save changes to the Jupyter notebook `analysis/Analysis.ipynb` (it will break your rebase merge).
+
 ## Some State-Specific Information
 
 ### Florida
