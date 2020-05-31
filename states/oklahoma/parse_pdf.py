@@ -25,42 +25,33 @@ def get_text(url):
     output.close()
     return text
 
-def makes_lines(text):
-  lines = []
-  line = ''
-  for character in text:
-    if character == '\n':
-      lines.append(line)
-      line = ''
-      continue
-    line += character
-
-  # remove header
-  return lines[5:]
-
 
 def group_rows(lines):
-  add_data = False
   # There is no email address, and fax and phone share a line.
   sections = ['COUNTY', 'PHONE', 'MAILING ADDRESS']
 
-  # index dictates which row this line should correspond to.  reset_index is how much we should 
-  # subtract from the index to 'reset' (40 on the first page, 37 on the second page)
-  reset_index = 40
-  index = 40
-  rows = []
+  # Only add data to output if it is between one of the above sections and an empty string.
+  add_data = False
+
+  index = 0
+
+  first_page_rows = []
+  second_page_rows = []
+
+  rows = first_page_rows
 
   for line in lines:
+    # indicates next page has started
     if 'State of Oklahoma' in line:
-      index = 77
-      reset_index = 37
+      rows = second_page_rows
 
+    # Edge case where one group lines does not end in empty string.
     if 'Please call CEB' in line:
       continue
 
     if line in sections:
       add_data = True
-      index -= reset_index
+      index = 0
       continue
     elif line == '':
       add_data = False
@@ -72,7 +63,9 @@ def group_rows(lines):
         rows[index].append(line)
       index += 1
 
-  return rows
+  first_page_rows.extend(second_page_rows)
+  return first_page_rows
+
 
 def generate_county_dict_list(rows):
   counties = {}
@@ -99,7 +92,9 @@ def generate_county_dict_list(rows):
 
 def main():
   text = get_text('https://www.ok.gov/elections/documents/CEB_Physical%20Addresses_%283-19-2020%29.pdf')
-  lines = makes_lines(text)
+  lines = text.split('\n')
+  # remove header
+  lines = lines[5:]
   rows = group_rows(lines)
   counties = generate_county_dict_list(rows)
 
