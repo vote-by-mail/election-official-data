@@ -74,3 +74,11 @@ def diff_and_save(data, fname, verbose=True):
     json.dump(data, f)
 
   return diff
+
+def normalize_state(data):
+  ''' Sort data in-place for consistent ordering '''
+  for datum in data:
+    for key in ['emails','phones','faxes']:
+      if key in datum:
+        datum[key] = sorted(set(datum[key]))
+  data.sort(key=lambda x: x['locale'])
