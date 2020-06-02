@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from common import dir_path, cache_request, decode_email, diff_and_save
+from common import cache_request, decode_email, normalize_state, diff_and_save
 
 BASE_URL = 'https://dos.elections.myflorida.com/supervisors/'
 
@@ -24,6 +24,5 @@ if __name__ == '__main__':
     text = cache_request(BASE_URL+county_link['href'])
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  # sort by locale for consistent ordering
-  data.sort(key=lambda x: x['locale'])
+  normalize_state(data)
   diff_and_save(data, 'public/florida.json')
