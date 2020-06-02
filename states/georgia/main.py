@@ -3,8 +3,7 @@ import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
-from common import cache_request, decode_email, diff_and_save
-
+from common import cache_request, decode_email, normalize_state, diff_and_save
 LIST_URL = "https://elections.sos.ga.gov/Elections/countyregistrars.do"
 DETAIL_URL = "https://elections.sos.ga.gov/Elections/contactinfo.do"
 
@@ -79,6 +78,5 @@ if __name__ == '__main__':
     text = cache_request(DETAIL_URL, method='POST', data={'idTown': county['value'], 'contactType': 'R'}, wait=wait)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  # sort by locale for consistent ordering
-  data.sort(key=lambda x: x['locale'])
+  normalize_state(data)
   diff_and_save(data, 'public/georgia.json')
