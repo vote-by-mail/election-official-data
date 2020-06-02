@@ -1,4 +1,4 @@
-from common import cache_request, decode_email, diff_and_save
+from common import cache_request, decode_email, normalize_state, diff_and_save
 import re
 from bs4 import BeautifulSoup
 
@@ -19,13 +19,12 @@ def parse_county(soup):
 
   text = re_extra_spaces.sub(' ', soup.get_text('\n')).replace('\n\n','\n')
   phone_lines = re_phone_line.findall(text)
-  results['phones'] = sorted(set(re_phone.findall(' '.join(phone_lines))))
+  results['phones'] = re_phone.findall(' '.join(phone_lines))
   fax_lines = re_fax_line.findall(text)
-  results['faxes'] = sorted(set(re_phone.findall(' '.join(fax_lines))))
+  results['faxes'] = re_phone.findall(' '.join(fax_lines))
 
   results['url'] = soup.select('a[href^=http]')[0].get('href').strip()
-  emails = [decode_email(x.get('data-cfemail')) for x in soup.find_all('span', class_='__cf_email__')]
-  results['emails'] = sorted(set(emails))
+  results['emails'] = [decode_email(x.get('data-cfemail')) for x in soup.find_all('span', class_='__cf_email__')]
 
   # use County Recorder as the primary official since they handle voter registration
   recorder = (re_recorder.search(text) or re_recorder2.search(text)).groupdict()
@@ -57,6 +56,5 @@ if __name__ == '__main__':
     if county.find('h2'): #there are extra blank divs
       data.append(parse_county(county))
 
-  # sort by locale for consistent ordering
-  data.sort(key=lambda x: x['locale'])
+  normalize_state(data)
   diff_and_save(data, 'public/arizona.json')
