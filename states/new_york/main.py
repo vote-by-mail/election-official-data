@@ -1,4 +1,4 @@
-from common import cache_request, to_list, diff_and_save
+from common import cache_request, to_list, normalize_state, diff_and_save
 import re
 from bs4 import BeautifulSoup
 
@@ -27,9 +27,8 @@ def parse_county(soup):
   for fax_line in re_fax_line.findall(text1):
     results['faxes'] += re_phone.findall(fax_line)
 
-  # emails
-  results['emails'] = sorted(set(i.get('href').replace('mailto:','').strip() for i in blocks[0].select('a[href^=mailto]')))
-  results['emails'] = list(filter(lambda x: not x.startswith('http'), results['emails'])) # Erie county apparently only uses a web form
+  # emails (exclude Erie county's web form url)
+  results['emails'] = [a['href'].replace('mailto:','').strip() for a in blocks[0].select('a[href^=mailto]') if not a['href'].startswith('mailto:http')]
 
   # county elections url
   url = blocks[0].find('a', text=lambda x: x and x.startswith('Visit')).get('href')
@@ -59,6 +58,5 @@ if __name__ == '__main__':
     text = cache_request(county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  # sort by locale for consistent ordering
-  data.sort(key=lambda x: x['locale'])
+  normalize_state(data)
   diff_and_save(data, 'public/new_york.json')
