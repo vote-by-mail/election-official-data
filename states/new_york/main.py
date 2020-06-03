@@ -58,5 +58,5 @@ if __name__ == '__main__':
     text = cache_request(county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  normalize_state(data)
+  data = normalize_state(data)
   diff_and_save(data, 'public/new_york.json')
