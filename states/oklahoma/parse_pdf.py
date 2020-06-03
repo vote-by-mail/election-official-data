@@ -33,57 +33,51 @@ def group_rows(lines):
   # Only add data to output if it is between one of the above sections and an empty string.
   add_data = False
 
-  index = 0
+  rows = {}
+  rows['COUNTY'] = []
+  rows['PHONE'] = []
+  rows['MAILING ADDRESS'] = []
 
-  first_page_rows = []
-  second_page_rows = []
-
-  rows = first_page_rows
+  section = ''
 
   for line in lines:
-    # indicates next page has started
-    if 'State of Oklahoma' in line:
-      rows = second_page_rows
-
     # Edge case where one group lines does not end in empty string.
     if 'Please call CEB' in line:
       continue
 
     if line in sections:
       add_data = True
-      index = 0
+      section = line
       continue
     elif line == '':
       add_data = False
 
     if add_data:
-      if index >= len(rows):
-        rows.append([line])
-      else:
-        rows[index].append(line)
-      index += 1
+      rows[section].append(line)
 
-  first_page_rows.extend(second_page_rows)
-  return first_page_rows
+  assert(len(rows['COUNTY']) == len(rows['PHONE']))
+  assert(len(rows['COUNTY']) == len(rows['MAILING ADDRESS']))
+
+  return rows
 
 
 def generate_county_dict_list(rows):
   counties = {}
 
-  for row in rows:
+  for i in range(0, len(rows['COUNTY'])):
     county = defaultdict(list)
 
-    county_name = row[0].strip('0123456789 ')
+    county_name = rows['COUNTY'][i].strip('0123456789 ')
 
     county['county'] = (county_name + ' County')
     county['locale'] = county['county']
 
-    phone_number, fax_number = row[1].split(' ')
+    phone_number, fax_number = rows['PHONE'][i].split(' ')
 
     county['phones'].append(phone_number)
     county['faxes'].append(fax_number)
 
-    county['address'] = row[2]
+    county['address'] = rows['MAILING ADDRESS'][i]
 
     counties[county_name] = county
 
