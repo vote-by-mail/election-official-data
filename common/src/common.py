@@ -76,9 +76,10 @@ def diff_and_save(data, fname, verbose=True):
   return diff
 
 def normalize_state(data):
-  ''' Sort data in-place for consistent ordering '''
+  ''' Return data with consistent ordering '''
   for datum in data:
     for key in datum.keys():
       if isinstance(datum[key], list):
         datum[key] = sorted(set(datum[key]))
   data.sort(key=lambda x: x.get('locale',''))
+  return data
