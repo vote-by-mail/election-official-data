@@ -56,5 +56,5 @@ if __name__ == '__main__':
     if county.find('h2'): #there are extra blank divs
       data.append(parse_county(county))
 
-  normalize_state(data)
+  data = normalize_state(data)
   diff_and_save(data, 'public/arizona.json')
