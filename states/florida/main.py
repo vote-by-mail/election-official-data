@@ -25,4 +25,4 @@ if __name__ == '__main__':
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   normalize_state(data)
-  diff_and_save(data, 'public/florida.json')
+  data = diff_and_save(data, 'public/florida.json')
