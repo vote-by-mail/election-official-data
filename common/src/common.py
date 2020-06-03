@@ -80,6 +80,9 @@ def normalize_state(data):
   for datum in data:
     for key in datum.keys():
       if isinstance(datum[key], list):
-        datum[key] = sorted(set(datum[key]))
+        try:
+          datum[key] = sorted(set(datum[key]))
+        except TypeError:
+          pass #not hashable
   data.sort(key=lambda x: x.get('locale',''))
   return data
