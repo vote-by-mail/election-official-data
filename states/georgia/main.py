@@ -78,5 +78,5 @@ if __name__ == '__main__':
     text = cache_request(DETAIL_URL, method='POST', data={'idTown': county['value'], 'contactType': 'R'}, wait=wait)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  normalize_state(data)
+  data = normalize_state(data)
   diff_and_save(data, 'public/georgia.json')
