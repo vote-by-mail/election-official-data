@@ -24,5 +24,5 @@ if __name__ == '__main__':
     text = cache_request(BASE_URL+county_link['href'])
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
-  normalize_state(data)
-  data = diff_and_save(data, 'public/florida.json')
+  data = normalize_state(data)
+  diff_and_save(data, 'public/florida.json')
