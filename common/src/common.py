@@ -21,13 +21,13 @@ def key_namer(args, kwargs):
 work_dir = dir_path(__file__) + '/../../cache/'
 
 @checkpoint(key=key_namer, work_dir=work_dir)
-def cache_request(url, method='GET', data={}, wait=None, is_binary=False):
+def cache_request(url, method='GET', data={}, wait=None, is_binary=False, verify=True):
   if wait is not None:
     time.sleep(wait)
   if data:
-    response = requests.request(method, url, data=data, stream=is_binary)
+    response = requests.request(method, url, data=data, stream=is_binary, verify=verify)
   else:
-    response = requests.request(method, url, stream=is_binary)
+    response = requests.request(method, url, stream=is_binary, verify=verify)
 
   if is_binary:
     return response.content
