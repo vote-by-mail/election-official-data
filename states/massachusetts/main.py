@@ -1,6 +1,11 @@
 from bs4 import BeautifulSoup
-import json
-from common import dir_path
+
+from common import cache_selenium, normalize_state, diff_and_save
+
+
+# js obfuscation requires cache_request_selenium
+BASE_URL = 'https://www.sec.state.ma.us/ele/eleclk/clkidx.htm'
+
 
 
 def parse_html(html):
@@ -26,18 +31,13 @@ def parse_html(html):
     sanitized_clerk_data.append(sanitized_data)
 
   return sanitized_clerk_data
+  
+def crawl_and_parse():
+  html = cache_selenium(BASE_URL)
+  data = parse_html(html)
+  data = normalize_state(data)
+  diff_and_save(data, 'public/massachusetts.json')
 
 
 if __name__ == "__main__":
-  print()
-  print(
-    'Visit https://www.sec.state.ma.us/ele/eleclk/clkidx.htm and download page to mass_clerks.html.  '
-    'If that page is unavailable, check out http://www.sec.state.ma.us/ele/ and look for the '
-    '"Local Election Official Directory" link.'
-  )
-  print()
-  with open(dir_path(__file__) + '/mass_clerks.html') as f:
-    json_data = parse_html(f)
-
-  with open(dir_path(__file__) + '/../../public/massachusetts.json', 'w') as f:
-    json.dump(json_data, f)
+  crawl_and_parse()
