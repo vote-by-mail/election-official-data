@@ -39,7 +39,7 @@ def cache_request(url, method='GET', data={}, wait=None, is_binary=False, verify
     return response.text
     
 @checkpoint(key=selenium_key_namer, work_dir=work_dir)
-def cache_selenium(url, wait=None, selenium=True):
+def cache_selenium(url, wait=None):
   if wait is not None:
     time.sleep(wait)
   options = webdriver.ChromeOptions()
