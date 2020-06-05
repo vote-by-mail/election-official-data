@@ -1,10 +1,12 @@
 from urllib.parse import urlparse, parse_qs
 import re
 import random
+import unicodedata
 
 from bs4 import BeautifulSoup
 
 from common import dir_path, cache_request, to_list, normalize_state, diff_and_save
+
 
 BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
 
@@ -12,27 +14,28 @@ BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
 # base64 root-intermediate-site certs saved from Chrome, converted to pem using openssl, concatenated into mich_chain.pem
 SSL_CERT = f'{dir_path(__file__)}\\mich_chain.pem'
 
+re_official = re.compile('^\s*(.*?)\s*[,\n]')
+re_address = re.compile('\n(.*)\nPhone', flags=re.MULTILINE+re.DOTALL)
+re_phone = re.compile('\nPhone:[^\n\S]*(.+?)\s*\n')
+re_fax = re.compile('Fax:[^\n\S]*(.+?)\s*\n')
 
 def random_wait(min_wait=.1, max_wait=.3):
   return random.uniform(min_wait, max_wait)
-
-def safe_extract(selector):
-  if not selector or not selector.parent or not selector.parent.nextSibling:
-    return None
-  return selector.parent.nextSibling.strip()
 
 def parse_jurisdiction(soup, jurisdiction_name, county_name):
   city = re.sub(r'\s+Twp', ' Township', jurisdiction_name)
   county = county_name.title().strip()
   body = soup.find('div', class_='card-body')
+  info = re.sub('\s*\n\s*', '\n', unicodedata.normalize('NFKD',body.text).strip())
   return {
     'locale': f'{city}:{county}',
     'city': city,
     'county': county,
     'emails': [a['href'].replace('mailto:','').strip() for a in body.select("a[href^=mailto]")],
-    'phones': to_list(safe_extract(body.find(text=lambda x: x.startswith("Phone")))),
-    'faxes': to_list(safe_extract(body.find(text=lambda x: x.startswith("Fax")))),
-    'official': body.text.strip().split('\n')[0].split(',')[0].strip(),
+    'phones': re_phone.findall(info),
+    'faxes': re_fax.findall(info),
+    'official': re_official.findall(info)[0],
+    'address': re_address.findall(info)[0].replace('\n',', '),
   }
 
 def crawl_and_parse():
