@@ -11,7 +11,8 @@ from common import dir_path, cache_request, to_list, normalize_state, diff_and_s
 BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
 
 # resolved issue with SSL cert chain by fixing intermediate cert
-# base64 root-intermediate-site certs saved from Chrome, converted to pem using openssl, concatenated into mich_chain.pem
+# base64 root-intermediate-site certs saved from Chrome, converted to pem using openssl,
+# concatenated into mich_chain.pem
 SSL_CERT = f'{dir_path(__file__)}\\mich_chain.pem'
 
 re_official = re.compile('^\s*(.*?)\s*[,\n]')
@@ -45,14 +46,30 @@ def crawl_and_parse():
   for county in soup.find('select', id='Counties')('option'):
     if not county.get('value'):
       continue
-    county_text = cache_request(f'{BASE_URL}/SearchByCounty', method='POST', data={'CountyID': county.get('value')}, wait=random_wait(), verify=SSL_CERT)
+    county_text = cache_request(
+      f'{BASE_URL}/SearchByCounty',
+      method='POST',
+      data={'CountyID': county.get('value')},
+      wait=random_wait(),
+      verify=SSL_CERT
+    )
     county_soup = BeautifulSoup(county_text, 'html.parser')
     for jurisdiction_a in county_soup('a', class_='local-clerk-link'):
       qrystr_params = parse_qs(urlparse(jurisdiction_a.get('href')).query)
       jurisdiction_data = {k: v[0] for k,v in qrystr_params.items() if k != 'dummy'}
-      jurisdiction_text = cache_request(f'{BASE_URL}/LocalClerk', method='POST', data=jurisdiction_data, wait=random_wait(), verify=SSL_CERT)
+      jurisdiction_text = cache_request(
+        f'{BASE_URL}/LocalClerk',
+        method='POST',
+        data=jurisdiction_data,
+        wait=random_wait(),
+        verify=SSL_CERT
+      )
       jurisdiction_soup = BeautifulSoup(jurisdiction_text, 'html.parser')
-      data.append(parse_jurisdiction(jurisdiction_soup, jurisdiction_data['jurisdictionName'], county.text))
+      data.append(parse_jurisdiction(
+        jurisdiction_soup,
+        jurisdiction_data['jurisdictionName'],
+        county.text
+      ))
 
   data = normalize_state(data)
   diff_and_save(data, 'public/michigan.json')
