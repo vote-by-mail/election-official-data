@@ -1,7 +1,6 @@
-import json
 from bs4 import BeautifulSoup
 
-from common import cache_request, diff_and_save #normalize_state, diff_and_save
+from common import cache_request, normalize_state, diff_and_save
 from parse_pdf import parse_pdf
 
 
@@ -12,10 +11,10 @@ def parse_email_list():
   soup = BeautifulSoup(text, 'html.parser')
   email_by_county = {}
   for row in soup.find('tbody')('tr'):
-    county_name = row.find('td').string
+    county_name = row.find('td').text
     email_tag = row.find('a')
     if email_tag is not None:
-      email_by_county[county_name] = email_tag.string
+      email_by_county[county_name] = email_tag.text
   return email_by_county
 
 def crawl_and_parse():
