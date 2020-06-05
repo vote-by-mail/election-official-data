@@ -6,6 +6,7 @@ import hashlib
 import json
 
 from ediblepickle import checkpoint
+from selenium import webdriver
 from deepdiff import DeepDiff
 
 
@@ -17,6 +18,9 @@ sha256 = lambda x: hashlib.sha256(x.encode('utf8')).hexdigest()
 def key_namer(args, kwargs):
   wait_free = { k: v for k, v in kwargs.items() if k != 'wait' }
   return sha256(str(args) + str(wait_free)) + '.pkl'
+
+def selenium_key_namer(args, kwargs):
+  return 'sel_' + key_namer(args, kwargs)
 
 work_dir = dir_path(__file__) + '/../../cache/'
 
@@ -33,6 +37,16 @@ def cache_request(url, method='GET', data={}, wait=None, is_binary=False, verify
     return response.content
   else:
     return response.text
+    
+@checkpoint(key=selenium_key_namer, work_dir=work_dir)
+def cache_selenium(url, wait=None, selenium=True):
+  if wait is not None:
+    time.sleep(wait)
+  options = webdriver.ChromeOptions()
+  options.add_argument('headless')
+  with webdriver.Chrome(options=options) as driver:
+    driver.get(url)
+    return driver.page_source
 
 def to_list(x):
   if x:
