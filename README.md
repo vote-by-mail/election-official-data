@@ -47,6 +47,20 @@ Please submit code via pull requests, ideally from this repo if you have access 
 - We strive to only use [rebase merges](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
 - Please don't save changes to the Jupyter notebook `analysis/Analysis.ipynb` (it will break your rebase merge).
 
+## Notes on Deploying
+To update a version, tag the commit with a bumped [semvar version](https://semver.org/) and push the tag.  Admittedly we are a little loose on the definition of a "minor" vs "patch" increment.  For example, if the previous version was `1.4.0` and we chose to increment to `1.5.0`, we would deploy using:
+```bash
+git tag v1.5.0
+git push origin v1.5.0
+```
+To see a list of all tags, run
+```bash
+git fetch
+git tag --list
+```
+<b style='color: red;'>DO NOT DELETE TAGS ONCE THEY ARE PUBLISHED!</b>
+Just increment the minor version and republish if you made a mistake.  We rely on stable tags for production.
+
 ## Some State-Specific Information
 
 ### Florida
