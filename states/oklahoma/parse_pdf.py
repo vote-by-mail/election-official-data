@@ -27,7 +27,7 @@ def get_pdf_text(url):
         interpreter.process_page(page)
       converter.close()
       text = output.getvalue()
-    return text
+  return text
 
 def parse_pdf():
   text = get_pdf_text(PDF_URL)
