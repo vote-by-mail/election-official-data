@@ -4,6 +4,7 @@ import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
+
 def line_gen(siblings):
   text = ''
   for x in siblings:
@@ -17,6 +18,7 @@ def line_gen(siblings):
     elif isinstance(x, Tag) and x.name == 'h3':
       yield text
       return
+
 
 def parse_county(county, datum):
   absentee_voting_contact = next(contact
@@ -34,12 +36,13 @@ def parse_county(county, datum):
     'locale': county.text,
     'county': county.text,
     'official': name,
-    'phones': [re.search('Phone: ([0-9\-]+)', phone).group(1)],
-    'faxes': [re.search('Fax: ([0-9\-]+)', fax).group(1)],
-    'emails': [re.search('Email:\s*(\S+)', email).group(1)],
+    'phones': [re.search(r'Phone: ([0-9\-]+)', phone).group(1)],
+    'faxes': [re.search(r'Fax: ([0-9\-]+)', fax).group(1)],
+    'emails': [re.search(r'Email:\s*(\S+)', email).group(1)],
   }
 
-if __name__ == '__main__':
+
+def main():
   text = cache_request('https://www.sos.state.mn.us/elections-voting/find-county-election-office/')
   soup = BeautifulSoup(text, 'lxml')
   counties = soup.select('h2.contentpage-h2 a')
@@ -52,3 +55,7 @@ if __name__ == '__main__':
 
   with open('public/minnesota.json', 'w') as fh:
     json.dump(data, fh)
+
+
+if __name__ == '__main__':
+  main()

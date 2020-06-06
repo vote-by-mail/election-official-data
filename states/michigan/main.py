@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from bs4 import BeautifulSoup
 
-from common import dir_path, cache_request, to_list, normalize_state, diff_and_save
+from common import dir_path, cache_request, normalize_state, diff_and_save
 
 
 BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
@@ -17,10 +17,11 @@ BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
 # concatenated into mich_chain.pem
 SSL_CERT = os.path.join(dir_path(__file__), 'mich_chain.pem')
 
-re_official = re.compile('^\s*(.*?)\s*[,\n]')
-re_address = re.compile('\n(.*)\nPhone', flags=re.MULTILINE+re.DOTALL)
-re_phone = re.compile('\nPhone:[^\n\S]*(.+?)\s*\n')
-re_fax = re.compile('Fax:[^\n\S]*(.+?)\s*\n')
+re_official = re.compile(r'^\s*(.*?)\s*[,\n]')
+re_address = re.compile(r'\n(.*)\nPhone', flags=re.MULTILINE + re.DOTALL)
+re_phone = re.compile(r'\nPhone:[^\n\S]*(.+?)\s*\n')
+re_fax = re.compile(r'Fax:[^\n\S]*(.+?)\s*\n')
+
 
 def random_wait(min_wait=.1, max_wait=.3):
   return random.uniform(min_wait, max_wait)
@@ -29,18 +30,19 @@ def parse_jurisdiction(soup, jurisdiction_name, county_name, fipscode):
   city = re.sub(r'\s+Twp', ' Township', jurisdiction_name)
   county = county_name.title().strip()
   body = soup.find('div', class_='card-body')
-  info = re.sub('\s*\n\s*', '\n', unicodedata.normalize('NFKD',body.text).strip())
+  info = re.sub(r'\s*\n\s*', '\n', unicodedata.normalize('NFKD', body.text).strip())
   return {
     'locale': f'{city}:{county}',
     'city': city,
     'county': county,
-    'emails': [a['href'].replace('mailto:','').strip() for a in body.select("a[href^=mailto]")],
+    'emails': [a['href'].replace('mailto:', '').strip() for a in body.select("a[href^=mailto]")],
     'phones': re_phone.findall(info),
     'faxes': re_fax.findall(info),
     'official': re_official.findall(info)[0],
     'address': re_address.findall(info)[0].replace('\n',', '),
     'fipscode': fipscode,
   }
+
 
 def crawl_and_parse():
   data = []
@@ -58,8 +60,8 @@ def crawl_and_parse():
     )
     county_soup = BeautifulSoup(county_text, 'html.parser')
     for jurisdiction_a in county_soup('a', class_='local-clerk-link'):
-      qry_str_params = parse_qs(urlparse(jurisdiction_a.get('href')).query)
-      jurisdiction_data = {k: v[0] for k,v in qry_str_params.items() if k != 'dummy'}
+      qrystr_params = parse_qs(urlparse(jurisdiction_a.get('href')).query)
+      jurisdiction_data = {k: v[0] for k, v in qrystr_params.items() if k != 'dummy'}
       jurisdiction_text = cache_request(
         f'{BASE_URL}/LocalClerk',
         method='POST',
@@ -77,6 +79,7 @@ def crawl_and_parse():
 
   data = normalize_state(data)
   diff_and_save(data, 'public/michigan.json')
+
 
 if __name__ == '__main__':
   crawl_and_parse()

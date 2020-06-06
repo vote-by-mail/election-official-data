@@ -9,6 +9,7 @@ import numpy as np
 
 from common import dir_path
 
+
 def _read_address(pattern, add_lookup_key):
   data = []
   for file in glob.glob(pattern):
@@ -24,11 +25,14 @@ def _read_address(pattern, add_lookup_key):
         data += [clerk_dict]
   return data
 
+
 def read_municipal_address(add_lookup_key=False):
   return _read_address(dir_path(__file__) + '/results/municipal_address/*.json', add_lookup_key)
 
+
 def read_mailing_address(add_lookup_key=False):
   return _read_address(dir_path(__file__) + '/results/mailing_address/*.json', add_lookup_key)
+
 
 def main():
   df_noemail = pd.read_json(dir_path(__file__) + '/results/records.noemail.json')
@@ -40,7 +44,7 @@ def main():
   df_mail['key'] = df_mail['jurisdictionName'].str.upper()
   df_muni['key'] = df_muni['jurisdictionName'].str.upper()
 
-  df_merged = df_muni.merge(df_mail, on='key', how='inner')
+  # unused # df_merged = df_muni.merge(df_mail, on='key', how='inner')
 
   df_fetched = pd.concat([
       df_muni.set_index('key'),
@@ -52,16 +56,16 @@ def main():
   df_noemail2 = df_noemail.set_index('key')
   fix_cols = ['city_type', 'city', 'county', 'clerk', 'deputy_clerk', 'municipal_address', 'mailing_address']
   for col in fix_cols:
-      df_noemail2[col] = df_noemail2[col].str.title()
+    df_noemail2[col] = df_noemail2[col].str.title()
 
   df_master = df_noemail2.merge(df_fetched, on='key', how='left').reset_index()
   df_master['title_key'] = df_master['key'].str.title()
 
   def merge_all_cols(df, pairs):
-      return pd.DataFrame({
-          first: df[first].where(df[first].notnull(), df[second])
-          for first, second in pairs
-      })
+    return pd.DataFrame({
+      first: df[first].where(df[first].notnull(), df[second])
+      for first, second in pairs
+    })
 
   df_final = pd.concat([
       merge_all_cols(df_master, [

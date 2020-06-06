@@ -1,14 +1,14 @@
 import json
-import os
 import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
-from common import cache_request, dir_path
+from common import dir_path
 
 
 def is_element(el, tag):
   return isinstance(el, Tag) and el.name == tag
+
 
 class ElemIterator():
   def __init__(self, els):
@@ -21,7 +21,7 @@ class ElemIterator():
     except IndexError:
       return None
 
-  def next(self):
+  def __next__(self):
     self.i += 1
     return self.els[self.i - 1]
 
@@ -30,11 +30,11 @@ class ElemIterator():
 
   def peek_till(self, tag):
     while not is_element(self.peek(), tag):
-      self.next()
+      self.__next__()
 
   def next_till(self, tag):
     self.peek_till(tag)
-    self.next()
+    self.__next__()
 
 
 def parse_lines(iter_):
@@ -42,7 +42,7 @@ def parse_lines(iter_):
 
   county = []
   while iter_.hasNext():
-    county += [iter_.next()]
+    county += [iter_.__next__()]
 
     if is_element(iter_.peek(), 'strong'):
       yield ElemIterator(county)
@@ -59,7 +59,7 @@ def parse_emails_url(iter_):
   try:
     while True:
       iter_.peek_till('a')
-      email = iter_.next()
+      email = iter_.__next__()
       href = email['href']
       if href.startswith('mailto:'):
         if href[7:]:
@@ -72,16 +72,17 @@ def parse_emails_url(iter_):
     pass
   return emails, url
 
+
 def parse_url(iter_):
   iter_.peek_till('a')
-  link = iter_.next()
+  link = iter_.__next__()
   href = link['href']
   assert(not href.startswith('mailto:'))
   return [href]
 
 
 def parse_county(iter_):
-  county_title = iter_.next().text.strip().title()
+  county_title = iter_.__next__().text.strip().title()
   locale = re.match('(.*) (City|County)', county_title).group(0)
 
   if county_title.startswith('Clark County Elections Mailing Address'):
@@ -93,7 +94,7 @@ def parse_county(iter_):
     }
 
   while True:
-    el = iter_.next()
+    el = iter_.__next__()
     if isinstance(el, NavigableString):
       if 'Clerk' in el or 'Registrar' in el:
         official = el.strip().split(',')[0]
@@ -101,14 +102,14 @@ def parse_county(iter_):
 
   address = []
   while True:
-    el = iter_.next()
+    el = iter_.__next__()
     if isinstance(el, NavigableString):
       address += [el.strip()]
       if re.search(r'Nevada \d{5}', el) or re.search(r'NV \d{5}', el):
         break
 
-  el = iter_.next()
-  el = iter_.next()
+  el = iter_.__next__()
+  el = iter_.__next__()
   if isinstance(el, NavigableString):
     el = el.replace(u'\xa0', ' ')  # replace non-breaking space
     matches1 = re.search(r'(\(\d{3}\) \d{3}-\d{4}) FAX (\(\d{3}\) \d{3}-\d{4})', el)
@@ -123,11 +124,11 @@ def parse_county(iter_):
       print(county_title)
       print(el)
       print(re.search(r'(\(\d{3}\) \d{3}-\d{4}) FAX', el))
-      assert(Fasle)
+      assert(False)
 
-  emails, url  = parse_emails_url(iter_)
+  emails, url = parse_emails_url(iter_)
 
-  init = { 'city': locale } if locale.endswith('City') else { 'county': locale }
+  init = {'city': locale} if locale.endswith('City') else {'county': locale}
 
   return {
     **init,
@@ -140,7 +141,8 @@ def parse_county(iter_):
     'url': url,
   }
 
-if __name__ == '__main__':
+
+def main():
   # Actually this file: https://www.nvsos.gov/sos/elections/voters/county-clerk-contact-information
   # But it's behind a javascript test
   with open(dir_path(__file__) + '/cache/Nevada.htm') as fh:
@@ -163,3 +165,7 @@ if __name__ == '__main__':
 
   with open('public/nevada.json', 'w') as fh:
     json.dump(counties, fh)
+
+
+if __name__ == '__main__':
+  main()

@@ -4,6 +4,7 @@ import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
+
 def find_re(regex, lines, find_all=False):
   results = []
   for line in lines:
@@ -18,12 +19,14 @@ def find_re(regex, lines, find_all=False):
   else:
     return None
 
+
 phone_re = re.compile(r'(\d{3}-\d{3}-\d{4})$')
 fax_re = re.compile(r'(\d{3}-\d{3}-\d{4}) \(fax', re.IGNORECASE)
 email_re = re.compile(r'[\w\-.]+@([\w\-]+\.)+[\w\-]{2,4}')
 election_director_re = re.compile(r'(.*),\w+Election Director')
 
-def find_hrefs(line):
+
+def find_hrefs(lines):
   results = {
     'emails': [],
     'urls': [],
@@ -38,7 +41,8 @@ def find_hrefs(line):
         results['urls'] += [line['href']]
   return results
 
-if __name__ == '__main__':
+
+def main():
   text = cache_request('https://elections.maryland.gov/about/county_boards.html')
   soup = BeautifulSoup(text, 'lxml')
   counties = soup.select('div.mdgov_contentWrapper > p')
@@ -46,9 +50,9 @@ if __name__ == '__main__':
   # lines = [line for line in line_gen(counties[1].children)]
   data = []
   for county in counties:
-    lines = [l for l in county.children]
+    lines = [li for li in county.children]
     href_datum = find_hrefs(lines)
-    url_datum = { 'url': href_datum['urls'][0] } if href_datum['urls'] else {}
+    url_datum = {'url': href_datum['urls'][0]} if href_datum['urls'] else {}
 
     geo = lines[0].text.strip()
     if geo.endswith('City'):
@@ -78,3 +82,7 @@ if __name__ == '__main__':
 
   with open('public/maryland.json', 'w') as fh:
     json.dump(data, fh)
+
+
+if __name__ == '__main__':
+  main()

@@ -16,13 +16,18 @@ def parse_county(soup):
     'county': county,
   }
 
-if __name__ == '__main__':
+
+def main():
   data = []
   text = cache_request(BASE_URL)
   soup = BeautifulSoup(text, 'html.parser')
   for county_link in soup.select('a[href^=countyInfo]'):
-    text = cache_request(BASE_URL+county_link['href'])
+    text = cache_request(BASE_URL + county_link['href'])
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   data = normalize_state(data)
   diff_and_save(data, 'public/florida.json')
+
+
+if __name__ == '__main__':
+  main()

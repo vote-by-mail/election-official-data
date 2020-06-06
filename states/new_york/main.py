@@ -1,13 +1,17 @@
-from common import cache_request, to_list, normalize_state, diff_and_save
+from common import cache_request, normalize_state, diff_and_save
 import re
 from bs4 import BeautifulSoup
 
 
+re_locale_address_str = r'(?P<locale>\S([^\S\n]|\w)*\s*County)\s*Board of Elections\s*'
+re_locale_address_str += r'(?P<address>\S.*\d{5}(-\d+)?)\s*'
+re_locale_address = re.compile(re_locale_address_str, flags=re.MULTILINE + re.DOTALL)
+
 re_extra_spaces = re.compile(r'[^\S\n]+')
-re_locale_address = re.compile(r'(?P<locale>\S([^\S\n]|\w)*\s*County)\s*Board of Elections\s*(?P<address>\S.*\d{5}(-\d+)?)\s*', flags=re.MULTILINE+re.DOTALL)
 re_phone_line = re.compile(r'Phone:\s*(.*)\n')
 re_fax_line = re.compile(r'Fax:\s*(.*)\n')
 re_phone = re.compile(r'1?\D*\d{3}\D*\d{3}\D*\d{4}')
+
 
 def parse_county(soup):
   # content is within the only table on the page, in 2 th cells
@@ -28,7 +32,8 @@ def parse_county(soup):
     results['faxes'] += re_phone.findall(fax_line)
 
   # emails (exclude Erie county's web form url)
-  results['emails'] = [a['href'].replace('mailto:','').strip() for a in blocks[0].select('a[href^=mailto]') if not a['href'].startswith('mailto:http')]
+  emails = blocks[0].select('a[href^=mailto]')
+  results['emails'] = [a['href'].replace('mailto:', '').strip() for a in emails if not a['href'].startswith('mailto:http')]
 
   # county elections url
   url = blocks[0].find('a', text=lambda x: x and x.startswith('Visit')).get('href')
@@ -41,14 +46,15 @@ def parse_county(soup):
   results['official'] = officers[0]
   results['other_officials'] = officers[1:]
 
-  for k in ['locale','emails','faxes','phones','county']:
-    if results['locale'].startswith('Erie') and k == 'emails': #Erie County apparently only uses a web form
+  for k in ['locale', 'emails', 'faxes', 'phones', 'county']:
+    if results['locale'].startswith('Erie') and k == 'emails':  # Erie County apparently only uses a web form
       continue
     assert(results[k])
 
   return results
 
-if __name__ == '__main__':
+
+def main():
   data = []
   text = cache_request('https://www.elections.ny.gov/CountyBoards.html')
   soup = BeautifulSoup(text, 'html.parser')
@@ -60,3 +66,7 @@ if __name__ == '__main__':
 
   data = normalize_state(data)
   diff_and_save(data, 'public/new_york.json')
+
+
+if __name__ == '__main__':
+  main()

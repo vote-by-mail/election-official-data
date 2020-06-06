@@ -3,6 +3,7 @@ import csv
 import json
 from io import StringIO
 
+
 def record(datum):
   return {
     'locale': datum[0],
@@ -12,6 +13,7 @@ def record(datum):
     'phones': to_list(datum[5]),
     'faxes': to_list(datum[6]),
   }
+
 
 if __name__ == '__main__':
   text = cache_request('https://www.maine.gov/tools/whatsnew/index.php?topic=cec_clerks_registrars&v=text')

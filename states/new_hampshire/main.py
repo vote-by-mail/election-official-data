@@ -4,10 +4,10 @@ from scrapy.crawler import CrawlerProcess
 import csv
 import re
 from io import StringIO
-from common import get_clerk_data_default_entry
 
-# We use Scrapy for New Hampshire because it has an .aspx __viewstate 
+# We use Scrapy for New Hampshire because it has an .aspx __viewstate
 # which must be generated and sent along with the request
+
 
 class NewHampshireSpider(scrapy.Spider):
   name = 'New Hampshire'
@@ -34,7 +34,7 @@ class NewHampshireSpider(scrapy.Spider):
         clerk_data.append(data)
 
     with open('../../public/new_hampshire.json', 'w') as f:
-        json.dump(clerk_data, f)
+      json.dump(clerk_data, f)
 
     return clerk_data
 
@@ -47,10 +47,10 @@ class NewHampshireSpider(scrapy.Spider):
     email_pattern = re.compile(r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$")
     clerk_data_entry = {}
     clerk_data_entry["city"] = town_or_city
-    clerk_data_entry["address"] = row["Address"].strip() 
+    clerk_data_entry["address"] = row["Address"].strip()
     clerk_data_entry["locale"] = town_or_city
     clerk_data_entry["emails"] = [row["E-Mail"]] if email_pattern.match(row["E-Mail"]) else []
-    clerk_data_entry["phones"] = ["603-" + row["Phone (area code 603)"]] if row["Phone (area code 603)"] else [] 
+    clerk_data_entry["phones"] = ["603-" + row["Phone (area code 603)"]] if row["Phone (area code 603)"] else []
     clerk_data_entry["faxes"] = ["603-" + row["Fax"]] if(row["Fax"]) else []
     clerk_data_entry["official"] = " ".join(x.capitalize() for x in row["Clerk"].split()) if row["Clerk"] else []
     return clerk_data_entry
@@ -65,6 +65,7 @@ class NewHampshireSpider(scrapy.Spider):
       return None
 
     return capitalized_city.strip()
+
 
 if __name__ == "__main__":
   process = CrawlerProcess()

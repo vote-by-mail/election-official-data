@@ -4,11 +4,13 @@ import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 
+
 def get_key_text(_iter):
   while True:
     el = next(_iter)
     if isinstance(el, Tag) and el.name == 'strong':
       return el.text.split(':')[0]
+
 
 def get_val_text(_iter):
   text = ''
@@ -21,6 +23,7 @@ def get_val_text(_iter):
     if (isinstance(el, Tag) and el.name == 'br'):
       return text
 
+
 def parse_lines(_iter):
   while True:
     try:
@@ -31,7 +34,9 @@ def parse_lines(_iter):
     except StopIteration:
       break
 
-county_re = re.compile('(.*) \((\d{1,2})\)')
+
+county_re = re.compile(r'(.*) \((\d{1,2})\)')
+
 
 def parse_county(county):
   _iter = iter(county.children)
@@ -57,7 +62,8 @@ def parse_county(county):
     'party': result['Party Affiliation'],
   }
 
-if __name__ == '__main__':
+
+def main():
   text = cache_request('https://sos.nebraska.gov/elections/election-officials-contact-information')
   soup = BeautifulSoup(text, 'lxml')
 
@@ -68,3 +74,7 @@ if __name__ == '__main__':
 
   with open('public/nebraska.json', 'w') as fh:
     json.dump(data, fh)
+
+
+if __name__ == '__main__':
+  main()

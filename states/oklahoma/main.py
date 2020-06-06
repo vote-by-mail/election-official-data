@@ -6,6 +6,7 @@ from parse_pdf import parse_pdf
 
 EMAIL_LIST_URL = 'https://www.ok.gov/elections/County_Election_Board_Email_Addresses.html'
 
+
 def parse_email_list():
   text = cache_request(EMAIL_LIST_URL)
   soup = BeautifulSoup(text, 'html.parser')
@@ -17,6 +18,7 @@ def parse_email_list():
       email_by_county[county_name] = email_tag.text
   return email_by_county
 
+
 def crawl_and_parse():
   pdf_data = parse_pdf()
   email_data = parse_email_list()
@@ -27,6 +29,7 @@ def crawl_and_parse():
 
   data = normalize_state(list(pdf_data.values()))
   diff_and_save(data, 'public/oklahoma.json')
+
 
 if __name__ == "__main__":
   crawl_and_parse()

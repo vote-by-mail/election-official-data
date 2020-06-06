@@ -1,4 +1,3 @@
-
 import unittest
 import glob
 import json
@@ -6,8 +5,10 @@ import re
 
 from parameterized import parameterized
 
+
 def publics():
   return glob.glob('public/*.json')
+
 
 class TestPublic(unittest.TestCase):
   def assert_nonempty_string(self, x, allow_none=True, regex=None, stripped=True, titled=True):
@@ -26,13 +27,13 @@ class TestPublic(unittest.TestCase):
     if regex:
       self.assertTrue(regex.search(x))
 
-  def assert_string_list(self, l, allow_none=True, regex=None):
-    if allow_none and l is None:
+  def assert_string_list(self, list_, allow_none=True, regex=None):
+    if allow_none and list_ is None:
       return
 
-    self.assertIsInstance(l, list)
-    self.assertEqual(len(l), len(set(l)))
-    for x in l:
+    self.assertIsInstance(list_, list)
+    self.assertEqual(len(list_), len(set(list_)))
+    for x in list_:
       self.assertIsInstance(x, str)
 
       if regex:
@@ -63,6 +64,7 @@ class TestPublic(unittest.TestCase):
         d.get('faxes'),
         regex=re.compile(r'^\D*1?\D*\d{3}\D*\d{3}\D*\d{4}\D*$')
       )
+
 
 if __name__ == '__main__':
   unittest.main()

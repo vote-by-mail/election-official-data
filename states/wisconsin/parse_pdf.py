@@ -6,8 +6,9 @@ from tqdm import tqdm
 
 from common import dir_path
 
-city_start_re = re.compile('^(CITY|TOWN|VILLAGE) OF')
-end_page_re = re.compile('^Page \d+ of 360$')
+city_start_re = re.compile(r'^(CITY|TOWN|VILLAGE) OF')
+end_page_re = re.compile(r'^Page \d+ of 360$')
+
 
 def chunk_city(text):
   lines = text.split('\n')
@@ -29,22 +30,26 @@ def chunk_city(text):
     if within_city:
       city_lines += [line]
 
+
 city_county_re = re.compile(r'(CITY|TOWN|VILLAGE)\s+OF\s+([A-Z.\- \n]+)\s+-\s+([A-Z.\- \n]+\s+COUNTY|MULTIPLE\s+COUNTIES)')
-clerk_re = re.compile('CLERK: (.*)')
+clerk_re = re.compile(r'CLERK: (.*)')
 deputy_clerk_re = re.compile('DEPUTY CLERK: (.*)')
 # address_re = re.compile(r'Municipal Address :([A-Z0-9, \n]+\s+\d{5}(-\d{4})?)')
 municipal_address_re = re.compile(r'Municipal Address :([^:]+\n)+')
 mailing_address_re = re.compile(r'Mailing Address :([^:]+\n)+')
 phone_re = re.compile(r'Phone \d: ([()\d-]+)')
 fax_re = re.compile(r'Fax: ([()\d-]+)')
-url_re = re.compile('(https?://[^\s/$.?#].[^\s]*)')
+url_re = re.compile(r'(https?://[^\s/$.?#].[^\s]*)')
+
 
 def first_group(regex, lines):
   match = regex.search(lines)
   return match.group(1).strip() if match else None
 
+
 def strip_newline(string):
   return string.replace('\n', '')
+
 
 def parse_city_lines(lines):
   match = city_county_re.search(lines)
@@ -63,9 +68,10 @@ def parse_city_lines(lines):
     'url': first_group(url_re, lines),
   }
 
-  return { k: strip_newline(v) if isinstance(v, str) else v for k, v in ret.items() }
+  return {k: strip_newline(v) if isinstance(v, str) else v for k, v in ret.items()}
 
-def main():
+
+def parse_pdf():
   with open(dir_path(__file__) + '/results/WI Municipal Clerks no emails Updated 3-23-2020.pdf', 'rb') as fh:
     pdf_reader = PyPDF2.PdfFileReader(fh)
     # full_text = [pdf_reader.getPage(page).extractText() for page in range(pdf_reader.numPages)]
@@ -80,4 +86,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  parse_pdf()

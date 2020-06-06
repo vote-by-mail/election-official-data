@@ -14,6 +14,7 @@ def parse_addr_line(key, line):
   else:
     return {key: line.strip().title().replace(' Ga ', ' GA ')}
 
+
 def parse_contact_line(line):
   if not isinstance(line, NavigableString):
     return {}
@@ -22,6 +23,7 @@ def parse_contact_line(line):
     k, v = parsed
     return {k.strip(): v.strip()}
   return {}
+
 
 def parse_contact(h4):
   title = h4.text
@@ -41,6 +43,7 @@ def parse_contact(h4):
     }
   else:
     raise ValueError('Encountered unrecognized contact')
+
 
 def parse_county(soup):
   soup = soup.find(id='Table1')
@@ -69,7 +72,7 @@ def parse_county(soup):
   }
 
 
-if __name__ == '__main__':
+def main():
   data = []
   text = cache_request(LIST_URL)
   soup = BeautifulSoup(text, 'html.parser')
@@ -79,4 +82,8 @@ if __name__ == '__main__':
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   data = normalize_state(data)
-  diff_and_save(data, 'public/georgia.json')
+  diff_and_save(data, 'public/georgia.json')  
+
+
+if __name__ == '__main__':
+  main()

@@ -13,19 +13,25 @@ from deepdiff import DeepDiff
 def dir_path(_file_):
   return os.path.dirname(os.path.realpath(_file_))
 
-sha256 = lambda x: hashlib.sha256(x.encode('utf8')).hexdigest()
+
+def sha256(x):
+  return hashlib.sha256(x.encode('utf8')).hexdigest()
+
 
 def key_namer(args, kwargs):
-  wait_free = { k: v for k, v in kwargs.items() if k != 'wait' }
+  wait_free = {k: v for k, v in kwargs.items() if k != 'wait'}
   return sha256(str(args) + str(wait_free)) + '.pkl'
+
 
 def selenium_key_namer(args, kwargs):
   return 'sel_' + key_namer(args, kwargs)
 
+
 work_dir = dir_path(__file__) + '/../../cache/'
 
+
 @checkpoint(key=key_namer, work_dir=work_dir)
-def cache_request(url, method='GET', data={}, wait=None, is_binary=False, verify=True):
+def cache_request(url, method='GET', data=None, wait=None, is_binary=False, verify=True):
   if wait is not None:
     time.sleep(wait)
   if data:
@@ -38,6 +44,7 @@ def cache_request(url, method='GET', data={}, wait=None, is_binary=False, verify
   else:
     return response.text
 
+
 @checkpoint(key=selenium_key_namer, work_dir=work_dir)
 def cache_selenium(url, wait=None):
   if wait is not None:
@@ -48,16 +55,19 @@ def cache_selenium(url, wait=None):
     driver.get(url)
     return driver.page_source
 
+
 def to_list(x):
   if x:
     return [x]
   else:
     return []
 
+
 def arg_parser():
   parser = argparse.ArgumentParser()
   parser.add_argument("--crawl", action="store_true")
   return parser.parse_args()
+
 
 def decode_email(e):
   '''
@@ -67,10 +77,11 @@ def decode_email(e):
   de = ""
   k = int(e[:2], 16)
 
-  for i in range(2, len(e)-1, 2):
-    de += chr(int(e[i:i+2], 16)^k)
+  for i in range(2, len(e) - 1, 2):
+    de += chr(int(e[i:i + 2], 16) ^ k)
 
   return de
+
 
 def diff_and_save(data, fname, verbose=True):
   # compare with old data (if exists)
@@ -89,6 +100,7 @@ def diff_and_save(data, fname, verbose=True):
 
   return diff
 
+
 def normalize_state(data):
   ''' Return data with consistent ordering '''
   for datum in data:
@@ -97,6 +109,6 @@ def normalize_state(data):
         try:
           datum[key] = sorted(set(datum[key]))
         except TypeError:
-          pass #not hashable
-  data.sort(key=lambda x: x.get('locale',''))
+          pass  # not hashable
+  data.sort(key=lambda x: x.get('locale', ''))
   return data

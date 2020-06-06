@@ -7,6 +7,7 @@ from common import dir_path
 
 URL = 'https://myvote.wi.gov/DesktopModules/GabMyVoteModules/api/WhereDoIVote/SearchPollingPlace'
 
+
 def fetch_clerk_results(address):
   parts = address.split(',')
   if len(parts) == 3:
@@ -30,6 +31,7 @@ def save_data(address, file_name):
   with open(file_name, 'w') as fh:
     json.dump(data, fh)
 
+
 def main():
   with open(dir_path(__file__) + '/results/records.noemail.json') as fh:
     records = json.load(fh)
@@ -49,6 +51,7 @@ def main():
       )
 
     # Really care about ['Data']['clerk']
+
 
 if __name__ == '__main__':
   main()
