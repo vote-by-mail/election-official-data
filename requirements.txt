@@ -16,4 +16,5 @@ invoke==1.4.1
 deepdiff==4.3.2
 tqdm==4.46.1
 flake8==3.8.2
+pylint==2.5.2
 -e ./common
