@@ -23,4 +23,7 @@ def lint(c):
   pyfiles = glob('*.py')
   for d in dirs:
     pyfiles += glob(f'{d}**/*.py', recursive=True)
-  c.run(f"{VENV_ACTIVATE} && pylint {' '.join(pyfiles)} --rcfile=.pylintrc")
+  if glob('venv/'):
+    c.run(f"{VENV_ACTIVATE} && pylint {' '.join(pyfiles)} --rcfile=.pylintrc")
+  else:
+    c.run(f"pylint {' '.join(pyfiles)} --rcfile=.pylintrc")
