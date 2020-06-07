@@ -40,3 +40,6 @@ jobs:
     - name: Test with test_public.py
       run: |
         python test_public.py
+    - name: Test Michigan with test_label.py
+      run: |
+        python states/michigan/muni/test_label.py
