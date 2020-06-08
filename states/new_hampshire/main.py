@@ -1,9 +1,8 @@
-import json
-import scrapy
-from scrapy.crawler import CrawlerProcess
 import csv
 import re
 from io import StringIO
+import scrapy
+from scrapy.crawler import CrawlerProcess
 from common import normalize_state, diff_and_save
 
 # We use Scrapy for New Hampshire because it has an .aspx __viewstate
@@ -18,15 +17,15 @@ class NewHampshireSpider(scrapy.Spider):
     yield scrapy.FormRequest.from_response(
       response,
       formdata={
-          'ctl00$MainContentPlaceHolder$PPReport': 'rdoCsv'
+        'ctl00$MainContentPlaceHolder$PPReport': 'rdoCsv'
       },
       method="POST",
       callback=self.parse_csv
     )
 
   def parse_csv(self, response):
-    f = StringIO(response.text)
-    reader = csv.DictReader(f, delimiter=",")
+    csv_str = StringIO(response.text)
+    reader = csv.DictReader(csv_str, delimiter=",")
     clerk_data = []
 
     for row in reader:
@@ -56,7 +55,8 @@ class NewHampshireSpider(scrapy.Spider):
       clerk_data_entry["official"] = " ".join(x.capitalize() for x in row["Clerk"].split())
     return clerk_data_entry
 
-  def extract_city_without_ward(self, row):
+  @staticmethod
+  def extract_city_without_ward(row):
     capitalized_city = " ".join(x.capitalize() for x in row["Town/City"].split())
 
     # we only extract data from the first ward
