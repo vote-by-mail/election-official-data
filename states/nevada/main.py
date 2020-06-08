@@ -77,7 +77,7 @@ def parse_url(iter_):
   iter_.peek_till('a')
   link = iter_.__next__()
   href = link['href']
-  assert(not href.startswith('mailto:'))
+  assert not href.startswith('mailto:')
   return [href]
 
 
@@ -124,7 +124,7 @@ def parse_county(iter_):
       print(county_title)
       print(el)
       print(re.search(r'(\(\d{3}\) \d{3}-\d{4}) FAX', el))
-      assert(False)
+      assert False
 
   emails, url = parse_emails_url(iter_)
 
@@ -161,7 +161,7 @@ def main():
       merge_counties[locale] = county
 
   counties = list(merge_counties.values())
-  assert(len(counties) == len(raw_counties) - 1)
+  assert len(counties) == len(raw_counties) - 1
 
   with open('public/nevada.json', 'w') as fh:
     json.dump(counties, fh)

@@ -47,8 +47,8 @@ def main():
   # unused # df_merged = df_muni.merge(df_mail, on='key', how='inner')
 
   df_fetched = pd.concat([
-      df_muni.set_index('key'),
-      df_mail.set_index('key'),
+    df_muni.set_index('key'),
+    df_mail.set_index('key'),
   ]).drop_duplicates()
 
   df_fetched.sample(n=5, random_state=42)
@@ -68,41 +68,41 @@ def main():
     })
 
   df_final = pd.concat([
-      merge_all_cols(df_master, [
-          ['muncipalAddress', 'municipal_address'],
-          ['mailingAddress', 'mailing_address'],
-          ['clerkName', 'clerk'],
-          ['fax_y', 'fax_x'],
-          ['jurisdictionName', 'title_key']
-      ]),
-      df_master[['email', 'notificationEmail', 'county']],
+    merge_all_cols(df_master, [
+      ['muncipalAddress', 'municipal_address'],
+      ['mailingAddress', 'mailing_address'],
+      ['clerkName', 'clerk'],
+      ['fax_y', 'fax_x'],
+      ['jurisdictionName', 'title_key']
+    ]),
+    df_master[['email', 'notificationEmail', 'county']],
   ], axis=1).rename({
-      'fax_y': 'fax',
-      'city_type': 'cityType'
+    'fax_y': 'fax',
+    'city_type': 'cityType'
   }, axis=1)
 
   df_final['city'] = df_master['city_type'] + ' of ' + df_master['city']
 
   df_output = df_final[
-      ['muncipalAddress', 'mailingAddress', 'clerkName', 'jurisdictionName', 'county', 'city']
+    ['muncipalAddress', 'mailingAddress', 'clerkName', 'jurisdictionName', 'county', 'city']
   ].rename({
-      'muncipalAddress': 'physicalAddress',
-      'mailingAddress': 'address',
-      'clerkName': 'official',
-      'jurisdictionName': 'locale',
+    'muncipalAddress': 'physicalAddress',
+    'mailingAddress': 'address',
+    'clerkName': 'official',
+    'jurisdictionName': 'locale',
   }, axis=1)
 
   def to_list(df):
     return df.apply(
-        lambda row: list(set(
-          email.strip()
-          for cell in row
-          if pd.notnull(cell)
-          if cell
-          for email in re.split(';|,', cell)
-          if email
-        )),
-        axis=1
+      lambda row: list(set(
+        email.strip()
+        for cell in row
+        if pd.notnull(cell)
+        if cell
+        for email in re.split(';|,', cell)
+        if email
+      )),
+      axis=1
     )
 
   df_output['county'] = df_output['county'].replace('Multiple Counties', np.nan).str.strip()

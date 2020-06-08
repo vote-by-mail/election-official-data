@@ -1,10 +1,10 @@
 import os
-import requests
 import argparse
 import time
 import hashlib
 import json
 
+import requests
 from ediblepickle import checkpoint
 from selenium import webdriver
 from deepdiff import DeepDiff

@@ -1,6 +1,6 @@
-import PyPDF2
 import re
 import json
+import PyPDF2
 from tqdm import tqdm
 
 

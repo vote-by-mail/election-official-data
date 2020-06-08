@@ -1,9 +1,8 @@
-from common import cache_request
 import json
 import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
-
+from common import cache_request
 
 def find_re(regex, lines, find_all=False):
   results = []
@@ -75,8 +74,8 @@ def main():
       **href_datum,
     }
 
-    assert(datum['emails'])
-    assert(find_re(fax_re, lines))
+    assert datum['emails']
+    assert find_re(fax_re, lines)
     data += [datum]
 
   with open('public/maryland.json', 'w') as fh:

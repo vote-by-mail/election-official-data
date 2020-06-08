@@ -1,7 +1,7 @@
-from common import cache_request
 import json
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+from common import cache_request
 
 
 def get_locality_ids():
@@ -20,7 +20,6 @@ def get_locality_datum(id_):
   soup = BeautifulSoup(page, 'lxml')
   keys = soup.select('.resultsWrapper')[0].select('h5.display-lable')
   vals = soup.select('.resultsWrapper')[0].select('p.display-field')
-  assert(len(keys) == len(vals))
   results = {key.text.strip(): val.text.strip() for key, val in zip(keys, vals)}
   locale = soup.select('select > option[selected="selected"]')[0].text.title()
   final = {

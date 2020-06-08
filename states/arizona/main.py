@@ -1,7 +1,6 @@
-from common import cache_request, decode_email, normalize_state, diff_and_save
 import re
 from bs4 import BeautifulSoup
-
+from common import cache_request, decode_email, normalize_state, diff_and_save
 
 re_recorder_str = r'(?P<recorder>\S.*\S)\s*\n.*County Recorder\s*Physical:\s*(?P<physical>\S.*\S)\s*'
 re_recorder_str += r'Mailing:\s*(?P<mailing>\S.*\S)\s*(?P<city_state_zip>\S.*\d{5}(-\d+)?)'
@@ -17,7 +16,7 @@ re_director2 = re.compile(re_director2_str, flags=re.MULTILINE)
 
 re_extra_spaces = re.compile(r'[^\S\n]+')
 re_recorder2 = re.compile(r'(?P<recorder>\S.*\S)\s*\n.*County Recorder\s*(?P<full_address>\S(.|\n)*?\d{5}(-\d+)?)\s',
-  flags=re.MULTILINE)
+                          flags=re.MULTILINE)
 re_phone_line = re_phone = re.compile(r'Phone\s*-?\s*(.*)\n')
 re_fax_line = re.compile(r'Fax\s*-?\s*(1?\D*\d{3}\D*\d{3}\D*\d{4})\D*\n')
 re_phone = re.compile(r'(\d{3}\D*\d{3}\D*\d{4})')
@@ -66,7 +65,7 @@ def parse_county(soup):
   for k in ['locale', 'emails', 'faxes', 'phones', 'county']:
     if not results[k]:
       print(results['locale'], k)
-    assert(results[k])
+    assert results[k]
 
   return results
 

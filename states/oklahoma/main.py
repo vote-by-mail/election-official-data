@@ -22,7 +22,7 @@ def parse_email_list():
 def crawl_and_parse():
   pdf_data = parse_pdf()
   email_data = parse_email_list()
-  assert(len(pdf_data) == len(email_data))
+  assert len(pdf_data) == len(email_data)
 
   for county_name, email in email_data.items():
     pdf_data[county_name]['emails'] = [email]

@@ -1,7 +1,7 @@
-from common import cache_request, to_list
 import csv
 import json
 from io import StringIO
+from common import cache_request, to_list
 
 
 def record(datum):

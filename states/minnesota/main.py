@@ -1,8 +1,8 @@
-from common import cache_request
 import json
 import re
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
+from common import cache_request
 
 
 def line_gen(siblings):
@@ -21,10 +21,7 @@ def line_gen(siblings):
 
 
 def parse_county(county, datum):
-  absentee_voting_contact = next(contact
-    for contact in datum.select('h3.contentpage-h3')
-    if contact.text == 'Absentee voting contact'
-  )
+  absentee_voting_contact = datum.find('h3', class_='contentpage-h3', text='Absentee voting contact')
 
   _iter = line_gen(absentee_voting_contact.next_siblings)
 

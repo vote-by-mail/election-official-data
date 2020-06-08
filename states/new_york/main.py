@@ -1,7 +1,6 @@
-from common import cache_request, normalize_state, diff_and_save
 import re
 from bs4 import BeautifulSoup
-
+from common import cache_request, normalize_state, diff_and_save
 
 re_locale_address_str = r'(?P<locale>\S([^\S\n]|\w)*\s*County)\s*Board of Elections\s*'
 re_locale_address_str += r'(?P<address>\S.*\d{5}(-\d+)?)\s*'
@@ -49,7 +48,7 @@ def parse_county(soup):
   for k in ['locale', 'emails', 'faxes', 'phones', 'county']:
     if results['locale'].startswith('Erie') and k == 'emails':  # Erie County apparently only uses a web form
       continue
-    assert(results[k])
+    assert results[k]
 
   return results
 

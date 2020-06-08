@@ -1,10 +1,10 @@
 import json
 from collections import defaultdict
+from io import BytesIO
+import re
 import PyPDF2
 from tqdm import tqdm
 from common import cache_request
-from io import BytesIO
-import re
 
 # link to data: https://sos.wyo.gov/Elections/Docs/WYCountyClerks_AbsRequest_VRChange.pdf
 
@@ -68,7 +68,7 @@ def group_counties(rows):
     key = 'address'
     # Email section is inconsistent.
     email_section = False
-    for i in range(0, len(row)):
+    for i, line in enumerate(row):
       line = row[i]
       line = line.strip(' \n')
       if len(line) == 0:
