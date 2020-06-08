@@ -4,6 +4,7 @@ from scrapy.crawler import CrawlerProcess
 import csv
 import re
 from io import StringIO
+from common import normalize_state, diff_and_save
 
 # We use Scrapy for New Hampshire because it has an .aspx __viewstate
 # which must be generated and sent along with the request
@@ -33,9 +34,8 @@ class NewHampshireSpider(scrapy.Spider):
       if data is not None:
         clerk_data.append(data)
 
-    with open('../../public/new_hampshire.json', 'w') as f:
-      json.dump(clerk_data, f)
-
+    clerk_data = normalize_state(clerk_data)
+    diff_and_save(clerk_data, 'public/new_hampshire.json')
     return clerk_data
 
   def extract_clerk_data(self, row):
@@ -52,7 +52,8 @@ class NewHampshireSpider(scrapy.Spider):
     clerk_data_entry["emails"] = [row["E-Mail"]] if email_pattern.match(row["E-Mail"]) else []
     clerk_data_entry["phones"] = ["603-" + row["Phone (area code 603)"]] if row["Phone (area code 603)"] else []
     clerk_data_entry["faxes"] = ["603-" + row["Fax"]] if(row["Fax"]) else []
-    clerk_data_entry["official"] = " ".join(x.capitalize() for x in row["Clerk"].split()) if row["Clerk"] else []
+    if row["Clerk"]:
+      clerk_data_entry["official"] = " ".join(x.capitalize() for x in row["Clerk"].split())
     return clerk_data_entry
 
   def extract_city_without_ward(self, row):
