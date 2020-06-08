@@ -27,6 +27,7 @@ interface Contact {
   party?: string            // party affiliation of official
 }
 ``` 
+**NB:**, fields with a question mark (e.g. `county?`) indicate that the value may possibly be empty, i.e. no such key exists.  If no values are provided by the state, this is how it is indicated.
 
 ## Adding a New State
 Each state's crawler is put under it's own folder (e.g. `states/new_york/main.py`) with potentially other files in the folder.
