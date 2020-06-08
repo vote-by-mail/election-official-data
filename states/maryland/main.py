@@ -16,8 +16,7 @@ def find_re(regex, lines, find_all=False):
         results += [match.group(1).strip()]
   if find_all:
     return results
-  else:
-    return None
+  return None
 
 
 phone_re = re.compile(r'(\d{3}-\d{3}-\d{4})$')
@@ -50,7 +49,7 @@ def main():
   # lines = [line for line in line_gen(counties[1].children)]
   data = []
   for county in counties:
-    lines = [li for li in county.children]
+    lines = list(county.children)
     href_datum = find_hrefs(lines)
     url_datum = {'url': href_datum['urls'][0]} if href_datum['urls'] else {}
 

@@ -43,7 +43,7 @@ def parse_county(county):
   # ignore first two children
   next(_iter)
   next(_iter)
-  result = dict([pair for pair in parse_lines(_iter)])
+  result = dict(parse_lines(_iter))
 
   match = county_re.search(result['County'])
   result['County'] = match.group(1)

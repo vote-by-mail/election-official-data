@@ -39,7 +39,7 @@ def parse_jurisdiction(soup, jurisdiction_name, county_name, fipscode):
     'phones': re_phone.findall(info),
     'faxes': re_fax.findall(info),
     'official': re_official.findall(info)[0],
-    'address': re_address.findall(info)[0].replace('\n',', '),
+    'address': re_address.findall(info)[0].replace('\n', ', '),
     'fipscode': fipscode,
   }
 

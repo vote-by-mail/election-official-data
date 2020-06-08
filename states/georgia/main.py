@@ -11,8 +11,7 @@ DETAIL_URL = "https://elections.sos.ga.gov/Elections/contactinfo.do"
 def parse_addr_line(key, line):
   if not isinstance(line, NavigableString):
     return {}
-  else:
-    return {key: line.strip().title().replace(' Ga ', ' GA ')}
+  return {key: line.strip().title().replace(' Ga ', ' GA ')}
 
 
 def parse_contact_line(line):
@@ -35,14 +34,13 @@ def parse_contact(h4):
       **parse_addr_line('addr1', line1),
       **parse_addr_line('addr2', line2),
     }
-  elif title == 'Contact Information:':
+  if title == 'Contact Information:':
     return {
       'kind': title.split(':')[0],
       **parse_contact_line(line1),
       **parse_contact_line(line2),
     }
-  else:
-    raise ValueError('Encountered unrecognized contact')
+  raise ValueError('Encountered unrecognized contact')
 
 
 def parse_county(soup):
@@ -82,7 +80,7 @@ def main():
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 
   data = normalize_state(data)
-  diff_and_save(data, 'public/georgia.json')  
+  diff_and_save(data, 'public/georgia.json')
 
 
 if __name__ == '__main__':

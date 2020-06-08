@@ -41,8 +41,7 @@ def cache_request(url, method='GET', data=None, wait=None, is_binary=False, veri
 
   if is_binary:
     return response.content
-  else:
-    return response.text
+  return response.text
 
 
 @checkpoint(key=selenium_key_namer, work_dir=work_dir)
@@ -59,8 +58,7 @@ def cache_selenium(url, wait=None):
 def to_list(x):
   if x:
     return [x]
-  else:
-    return []
+  return []
 
 
 def arg_parser():

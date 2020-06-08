@@ -10,7 +10,7 @@ def get_arcgis_fipscode():
   # The following file is the Michigan ARCGIS data and unlikely to change with time
   # https://gis-michigan.opendata.arcgis.com/datasets/minor-civil-divisions-cities-townships-v17a/data?geometry=-167.515%2C43.121%2C169.985%2C84.204
   with open(os.path.join(dir_path(__file__), 'Minor_Civil_Divisions.csv')) as fh:
-    rows = [row for row in csv.reader(fh)]
+    rows = list(csv.reader(fh))
     header = rows[0]
     rows = rows[1:]
     label_idx = header.index('FIPSCODE')
