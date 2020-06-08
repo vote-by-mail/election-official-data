@@ -20,7 +20,7 @@ def collect(c, state):
 def lint(c, warn=None):
   dirs = [d for d in glob('**/') if not d.startswith('venv')]
   pyfiles = glob('*.py')
-  extra_opt = '--enable=R,C --disable=C0103,C0114,C0115,C0116 --exit-zero --reports=y' if warn else ''
+  extra_opt = '--enable=all --disable=C0114,C0115,C0116 --exit-zero --reports=y' if warn else ''
   for d in dirs:
     pyfiles += glob(f'{d}**/*.py', recursive=True)
   if glob('venv/'):
