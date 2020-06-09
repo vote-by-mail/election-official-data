@@ -43,7 +43,7 @@ def parse_city(text):
     'fax': first_group(fax_re, text),
     'url': first_group(url_re, text),
   }
-  return {k: strip_newline(v) if isinstance(v, str) else v for k, v in ret.items()}
+  return {k: strip_newline(v).title() if isinstance(v, str) else v for k, v in ret.items()}
 
 def parse_pdf():
   html = cache_request(BASE_URL)

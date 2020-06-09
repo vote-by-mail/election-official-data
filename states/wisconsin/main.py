@@ -30,8 +30,8 @@ def aggregate(no_email, muni_clerk, mail_clerk):
 
   df_muni = pd.DataFrame([row for row in muni_clerk if row]).dropna(axis=0, how='all')
   df_mail = pd.DataFrame([row for row in mail_clerk if row]).dropna(axis=0, how='all')
-  df_muni['key'] = df_muni['jurisdictionName'].str.upper()
-  df_mail['key'] = df_mail['jurisdictionName'].str.upper()
+  df_muni['key'] = df_muni['jurisdictionName'].str.title()
+  df_mail['key'] = df_mail['jurisdictionName'].str.title()
 
   df_fetched = pd.concat([
     df_muni.set_index('key'),
@@ -39,12 +39,7 @@ def aggregate(no_email, muni_clerk, mail_clerk):
   ]).drop_duplicates()
 
   df_noemail2 = df_noemail.set_index('key')
-  fix_cols = ['city_type', 'city', 'county', 'clerk', 'deputy_clerk', 'municipal_address', 'mailing_address']
-  for col in fix_cols:
-    df_noemail2[col] = df_noemail2[col].str.title()
-
   df_master = df_noemail2.merge(df_fetched, on='key', how='left').reset_index()
-  df_master['title_key'] = df_master['key'].str.title()
 
   #try first else use second
   def merge_all_cols(df, pairs):
@@ -59,7 +54,7 @@ def aggregate(no_email, muni_clerk, mail_clerk):
       ['mailingAddress', 'mailing_address'],
       ['clerkName', 'clerk'],
       ['fax_y', 'fax_x'],
-      ['jurisdictionName', 'title_key']
+      ['jurisdictionName', 'key']
     ]),
     df_master[['email', 'notificationEmail', 'county']],
   ], axis=1).rename({
@@ -115,7 +110,6 @@ def main():
   data = aggregate(data, muni_clerk, mail_clerk)
   data = normalize_state(data)
   diff_and_save(data, 'public/wisconsin.json')
-  #records = aggregate.aggregate(records)
 
   with open('public/wisconsin_old.json', 'r') as f:
     old_data = json.load(f)
