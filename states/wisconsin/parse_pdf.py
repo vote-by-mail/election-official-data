@@ -1,10 +1,12 @@
 import re
-import json
+from io import BytesIO
 import PyPDF2
+from bs4 import BeautifulSoup
 from tqdm import tqdm
 
+from common import cache_request
 
-from common import dir_path
+BASE_URL = 'https://elections.wi.gov/clerks/directory'
 
 city_start_re = re.compile(r'^(CITY|TOWN|VILLAGE) OF')
 end_page_re = re.compile(r'^Page \d+ of 360$')
@@ -72,18 +74,15 @@ def parse_city_lines(lines):
 
 
 def parse_pdf():
-  with open(dir_path(__file__) + '/results/WI Municipal Clerks no emails Updated 3-23-2020.pdf', 'rb') as fh:
-    pdf_reader = PyPDF2.PdfFileReader(fh)
-    # full_text = [pdf_reader.getPage(page).extractText() for page in range(pdf_reader.numPages)]
+  html = cache_request(BASE_URL)
+  soup = BeautifulSoup(html, 'html.parser')
+  pdf_url = soup.find('a', text=re.compile('^WI Municipal Clerks'))['href']
+  req = cache_request(pdf_url, is_binary=True)
+  with BytesIO(req) as pdf_bytes:
+    pdf_reader = PyPDF2.PdfFileReader(pdf_bytes)
     records = []
     for page_num in tqdm(range(pdf_reader.numPages)):
       text = pdf_reader.getPage(page_num).extractText()
       for city_lines in chunk_city(text):
-        records += [parse_city_lines(city_lines)]
-
-  with open(dir_path(__file__) + '/results/records.noemail.json', 'w') as fh:
-    json.dump(records, fh)
-
-
-if __name__ == '__main__':
-  parse_pdf()
+        records.append(parse_city_lines(city_lines))
+  return records

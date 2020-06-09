@@ -10,48 +10,20 @@ import numpy as np
 from common import dir_path
 
 
-def _read_address(pattern, add_lookup_key):
-  data = []
-  for file in glob.glob(pattern):
-    base = os.path.basename(file)
-    key = os.path.splitext(base)[0]
-    with open(file) as fh:
-      datum = json.load(fh).get('Data') or {}
-      clerk_dict = datum.get('clerk') or {}
-      if add_lookup_key:
-        key_dict = {'lookup_key': key}
-        data += [{**clerk_dict, **key_dict}]
-      else:
-        data += [clerk_dict]
-  return data
+def aggregate(records):
+  df_noemail = pd.DataFrame(records)
 
-
-def read_municipal_address(add_lookup_key=False):
-  return _read_address(dir_path(__file__) + '/results/municipal_address/*.json', add_lookup_key)
-
-
-def read_mailing_address(add_lookup_key=False):
-  return _read_address(dir_path(__file__) + '/results/mailing_address/*.json', add_lookup_key)
-
-
-def main():
-  df_noemail = pd.read_json(dir_path(__file__) + '/results/records.noemail.json')
-  df_noemail.sample(5, random_state=42)
-
-  df_mail = pd.DataFrame(read_mailing_address()).dropna(axis=0, how='all')
-  df_muni = pd.DataFrame(read_municipal_address()).dropna(axis=0, how='all')
-
-  df_mail['key'] = df_mail['jurisdictionName'].str.upper()
+  df_muni = pd.DataFrame([row['muni_clerk'] for row in records if 'muni_clerk' in row]).dropna(axis=0, how='all')
+  df_mail = pd.DataFrame([row['mail_clerk'] for row in records if 'mail_clerk' in row]).dropna(axis=0, how='all')
   df_muni['key'] = df_muni['jurisdictionName'].str.upper()
-
-  # unused # df_merged = df_muni.merge(df_mail, on='key', how='inner')
+  df_mail['key'] = df_mail['jurisdictionName'].str.upper()
 
   df_fetched = pd.concat([
     df_muni.set_index('key'),
     df_mail.set_index('key'),
   ]).drop_duplicates()
 
-  df_fetched.sample(n=5, random_state=42)
+  print(df_fetched.sample(n=5, random_state=42))
 
   df_noemail2 = df_noemail.set_index('key')
   fix_cols = ['city_type', 'city', 'county', 'clerk', 'deputy_clerk', 'municipal_address', 'mailing_address']
