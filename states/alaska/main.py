@@ -23,14 +23,20 @@ def main():
   text = cache_request(URL)
   soup = BeautifulSoup(text, 'html.parser')
 
-  email = soup.find('a', href=re.compile(r"^mailto:")).text
-  data['emails'].append(email)
+  emails = soup.find_all('a', href=re.compile(r'^mailto:'))
+  for email in emails:
+    email_address = ''
+    if '@' in email.text:
+      email_address = email.text
+    else:
+      email_address = email['href'].replace('mailto:', '')
+    data['emails'].append(email_address)
 
   for p in soup.find_all('p'):
     text = p.text
     if 'Fax' in text:
       data['faxes'].append(extract_phone_number(text))
-    elif 'Phone' in text:
+    elif 'Phone' in text or 'Toll-Free' in text:
       data['phones'].append(extract_phone_number(text))
     elif 'Absentee and Petition Office' in text:
       lines = text.split('\n')
