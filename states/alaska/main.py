@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 from bs4 import BeautifulSoup
-from common import cache_request, decode_email, normalize_state, diff_and_save
+from common import cache_request, normalize_state, diff_and_save
 
 
 URL = 'http://www.elections.alaska.gov/Core/contacttheabsenteeandpetitionoffice.php'
