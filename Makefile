@@ -17,6 +17,12 @@ ipython:
 
 jupyter:
 	source venv/bin/activate && jupyter notebook
+	
+lint:
+	source venv/bin/activate && inv lint
+	
+lintwarn:
+	source venv/bin/activate && inv lintwarn
 
 test:
-	source venv/bin/activate && python test_public.py
+	source venv/bin/activate && inv test
