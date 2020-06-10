@@ -1,6 +1,6 @@
+# Election Contacts
 ![](https://github.com/mail-my-ballot/elections-officials/workflows/Python%20application/badge.svg)
 
-# Election Contacts
 This repo collects information by locale (county or town) from critical swing states for [MailMyBallot.org](https://mailmyballot.org).  Code for each state is under the state's name.
 
 ## Getting Started
