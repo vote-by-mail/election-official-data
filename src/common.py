@@ -22,8 +22,8 @@ def dir_path(_file_):
   return os.path.dirname(os.path.realpath(_file_))
 
 
-def sha256(x):
-  return hashlib.sha256(x.encode('utf8')).hexdigest()
+def sha256(text):
+  return hashlib.sha256(text.encode('utf8')).hexdigest()
 
 
 def key_namer(args, kwargs):
@@ -93,9 +93,9 @@ def cache_webkit(url, wait=None):
   return Render(url).html
 
 
-def to_list(x):
-  if x:
-    return [x]
+def to_list(item):
+  if item:
+    return [item]
   return []
 
 
@@ -105,26 +105,21 @@ def arg_parser():
   return parser.parse_args()
 
 
-def decode_email(e):
+def decode_email(obfuscated):
   '''
-  Decrypts a CloudFlare-obfuscuated email address.
+  Decrypts a CloudFlare-obfuscated email address.
   https://stackoverflow.com/questions/36911296/scraping-of-protected-email
   '''
-  de = ""
-  k = int(e[:2], 16)
-
-  for i in range(2, len(e) - 1, 2):
-    de += chr(int(e[i:i + 2], 16) ^ k)
-
-  return de
+  key = int(obfuscated[:2], 16)
+  return ''.join(chr(int(obfuscated[i:i + 2], 16) ^ key) for i in range(2, len(obfuscated) - 1, 2))
 
 
 def diff_and_save(data, fname, verbose=True):
   fpath = os.path.join(public_dir, re.sub(r'^public/', '', fname))
   # compare with old data (if exists)
   if os.path.exists(fpath):
-    with open(fpath, 'r') as f:
-      old_data = json.load(f)
+    with open(fpath, 'r') as cached_file:
+      old_data = json.load(cached_file)
   else:
     old_data = None
   diff = DeepDiff(old_data, data)
@@ -132,8 +127,8 @@ def diff_and_save(data, fname, verbose=True):
     print(f"Diff '{fname}': {diff}")
 
   # save new data
-  with open(fpath, 'w') as f:
-    json.dump(data, f)
+  with open(fpath, 'w') as cached_file:
+    json.dump(data, cached_file)
 
   return diff
 
