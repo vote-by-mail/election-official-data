@@ -1,0 +1,50 @@
+# This workflow will install Python dependencies, collect data, and run tests on the generated files
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Collect data
+
+on:
+  push:
+    branches: [ auto-collect ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      #with:
+        #ref: 'master'
+        # persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        # fetch-depth: 0
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Create venv and install dependencies
+      run: make create-install
+    - name: Collect Alaska
+      run: . venv/bin/activate && inv collect alaska
+    - name: Collect Wyoming
+      run: . venv/bin/activate && inv collect wyoming
+    - name: Output list of new data files
+      run: ls -ls public
+    - name: Test new data files
+      run: make test
+    - name: Move files to date folder
+      run: |
+        mkdir -p public/`date +%Y-%m-%d_%H%M`
+        mv public/*.json public/`date +%Y-%m-%d_%H%M` -f
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add ./public
+        git commit -m "Collect new data files"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        branch: 'collect-data'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force: true
