@@ -1,6 +1,7 @@
 from io import BytesIO
 from io import StringIO
 import re
+from urllib.parse import urljoin
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
@@ -8,8 +9,7 @@ from pdfminer.pdfpage import PDFPage
 from bs4 import BeautifulSoup
 from common import cache_request
 
-EMAIL_LIST_URL = 'https://www.ok.gov/elections/County_Election_Board_Email_Addresses.html'
-PDF_URL = 'https://www.ok.gov/elections/documents/CEB_Physical%20Addresses_%283-19-2020%29.pdf'
+BASE_URL = 'https://www.ok.gov/elections/About_Us/County_Election_Boards/'
 
 # covers county edge case where next line starts with *
 re_county_section = re.compile(r'(?<=COUNTY\n).*?(?=\n\n|\n\*)', flags=re.MULTILINE + re.DOTALL)
@@ -18,23 +18,23 @@ re_mailing_section = re.compile(r'(?<=MAILING ADDRESS\n).*?(?=\n\n)', flags=re.M
 re_number_space = re.compile(r'[\d]+\s*')
 
 
+# Oklahoma uses pdfminer since its pdf doesn't work with PyPDF2
 def get_pdf_text(url):
   req = cache_request(url, is_binary=True)
-  with BytesIO(req) as fh:
+  with BytesIO(req) as pdf_file:
     with StringIO() as output:
       manager = PDFResourceManager()
       converter = TextConverter(manager, output, laparams=LAParams())
       interpreter = PDFPageInterpreter(manager, converter)
-      for page in PDFPage.get_pages(fh, set()):
+      for page in PDFPage.get_pages(pdf_file, set()):
         interpreter.process_page(page)
       converter.close()
       text = output.getvalue()
   return text
 
 
-def parse_pdf():
-  text = get_pdf_text(PDF_URL)
-
+def parse_pdf(pdf_url):
+  text = get_pdf_text(pdf_url)
   counties = re_number_space.sub('', '\n'.join(re_county_section.findall(text))).split('\n')
   phones_faxes = '\n'.join(re_phone_fax_section.findall(text)).split('\n')
   mailing_addrs = '\n'.join(re_mailing_section.findall(text)).split('\n')
@@ -53,8 +53,8 @@ def parse_pdf():
   return data
 
 
-def parse_email_list():
-  text = cache_request(EMAIL_LIST_URL)
+def parse_email_list(email_list_url):
+  text = cache_request(email_list_url)
   soup = BeautifulSoup(text, 'html.parser')
   email_by_county = {}
   for row in soup.find('tbody')('tr'):
@@ -66,8 +66,13 @@ def parse_email_list():
 
 
 def fetch_data():
-  pdf_data = parse_pdf()
-  email_data = parse_email_list()
+  html = cache_request(BASE_URL)
+  soup = BeautifulSoup(html, 'html.parser')
+  pdf_url = urljoin(BASE_URL, soup.find('a', text=re.compile('^List of County Election Boards'))['href'])
+  email_list_url = urljoin(BASE_URL, soup.find('a', text=re.compile('^County Election Board Email Addresses'))['href'])
+
+  pdf_data = parse_pdf(pdf_url)
+  email_data = parse_email_list(email_list_url)
   assert len(pdf_data) == len(email_data)
 
   for county_name, email in email_data.items():
