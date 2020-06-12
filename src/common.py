@@ -4,11 +4,15 @@ import time
 import hashlib
 import json
 import re
+import sys
 
 import requests
 from ediblepickle import checkpoint
 from selenium import webdriver
 from deepdiff import DeepDiff
+from PyQt5.QtCore import QUrl  # pylint: disable=no-name-in-module
+from PyQt5.QtWidgets import QApplication  # pylint: disable=no-name-in-module
+from PyQt5.QtWebEngineWidgets import QWebEngineView  # pylint: disable=no-name-in-module
 
 
 def dir_path(_file_):
@@ -26,6 +30,10 @@ def key_namer(args, kwargs):
 
 def selenium_key_namer(args, kwargs):
   return 'sel_' + key_namer(args, kwargs)
+
+
+def webkit_key_namer(args, kwargs):
+  return 'wk_' + key_namer(args, kwargs)
 
 
 work_dir = os.path.join(dir_path(__file__), 'cache')
@@ -55,6 +63,31 @@ def cache_selenium(url, wait=None):
   with webdriver.Chrome(options=options) as driver:
     driver.get(url)
     return driver.page_source
+
+
+class Render(QWebEngineView):  # pylint: disable=too-few-public-methods
+  # https://stackoverflow.com/questions/37754138/how-to-render-html-with-pyqt5s-qwebengineview
+  def __init__(self, url):
+    self.html = None
+    self.app = QApplication(sys.argv)
+    QWebEngineView.__init__(self)
+    self.loadFinished.connect(self._load_finished)
+    self.load(QUrl(url))
+    self.app.exec_()
+
+  def _callable(self, data):
+    self.html = data
+    self.app.quit()
+
+  def _load_finished(self, result):  # pylint: disable=unused-argument
+    self.page().toHtml(self._callable)
+
+
+@checkpoint(key=webkit_key_namer, work_dir=work_dir)
+def cache_webkit(url, wait=None):
+  if wait is not None:
+    time.sleep(wait)
+  return Render(url).html
 
 
 def to_list(x):
