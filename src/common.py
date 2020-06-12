@@ -5,6 +5,7 @@ import hashlib
 import json
 import re
 import sys
+from io import BytesIO
 
 import requests
 from ediblepickle import checkpoint
@@ -13,6 +14,8 @@ from deepdiff import DeepDiff
 from PyQt5.QtCore import QUrl  # pylint: disable=no-name-in-module
 from PyQt5.QtWidgets import QApplication  # pylint: disable=no-name-in-module
 from PyQt5.QtWebEngineWidgets import QWebEngineView  # pylint: disable=no-name-in-module
+from PyPDF2 import PdfFileReader
+from tqdm import tqdm
 
 
 def dir_path(_file_):
@@ -146,3 +149,10 @@ def normalize_state(data):
           pass  # not hashable
   data.sort(key=lambda x: x.get('locale', ''))
   return data
+
+
+def fetch_pdf_text(pdf_url):
+  response = cache_request(pdf_url, is_binary=True)
+  with BytesIO(response) as pdf_file:
+    pdf_reader = PdfFileReader(pdf_file)
+    return ''.join(page.extractText() for page in tqdm(pdf_reader.pages))
