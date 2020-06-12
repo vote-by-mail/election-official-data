@@ -1,13 +1,11 @@
 import re
 import json
 import random
-from io import BytesIO
 import pandas as pd
 import numpy as np
-import PyPDF2
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from common import cache_request, to_list
+from common import fetch_pdf_text, cache_request, to_list
 
 BASE_URL = 'https://elections.wi.gov/clerks/directory'
 POST_URL = 'https://myvote.wi.gov/DesktopModules/GabMyVoteModules/api/WhereDoIVote/SearchPollingPlace'
@@ -55,15 +53,8 @@ def parse_pdf():
   html = cache_request(BASE_URL)
   soup = BeautifulSoup(html, 'html.parser')
   pdf_url = soup.find('a', text=re.compile('^WI Municipal Clerks'))['href']
-  req = cache_request(pdf_url, is_binary=True)
-  with BytesIO(req) as pdf_bytes:
-    pdf_reader = PyPDF2.PdfFileReader(pdf_bytes)
-    records = []
-    for page_num in tqdm(range(pdf_reader.numPages)):
-      text = pdf_reader.getPage(page_num).extractText()
-      for city_chunk in re_city_chunk.findall(text):
-        records.append(parse_city(city_chunk))
-  return records
+  text = fetch_pdf_text(pdf_url)
+  return [parse_city(city_chunk) for city_chunk in tqdm(re_city_chunk.findall(text))]
 
 
 def query_clerk_data(pdf_data):
