@@ -11,7 +11,7 @@ from common import work_dir
 # which must be generated and sent along with the request
 
 BASE_URL = "https://app.sos.nh.gov/Public/Reports.aspx"
-CACHE_FILE_PATH = os.path.relpath(f"{work_dir}/new_hampshire_raw.jl")
+CACHE_FILE_PATH = os.path.relpath(f"{work_dir}/new_hampshire_raw.json")
 
 re_email = re.compile(r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$")
 
@@ -75,13 +75,13 @@ def fetch_data():
     print('Using cached data')
   else:
     process = CrawlerProcess({
-      'FEED_FORMAT': 'jsonlines',
+      'FEED_FORMAT': 'json',
       'FEED_URI': CACHE_FILE_PATH,
     })
     process.crawl(NewHampshireSpider)
     process.start()
   with open(CACHE_FILE_PATH) as cached_file:
-    data = [json.loads(line) for line in cached_file]
+    data = json.load(cached_file)
   return data
 
 
