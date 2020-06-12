@@ -1,35 +1,10 @@
 from collections import defaultdict
-from io import BytesIO
 import re
-import PyPDF2
-from tqdm import tqdm
-from common import cache_request
+from common import fetch_pdf_text
 
 PDF_URL = "https://sos.wyo.gov/Elections/Docs/WYCountyClerks_AbsRequest_VRChange.pdf"
 
 email_suffixes = ['.us', '.gov', '.net', '.com', '.org']
-
-
-def make_lines(full_text):
-  lines = []
-  line = ''
-  for character in full_text:
-    line += character
-    if character == '\n':
-      # Some address and phone number lines bleed into following lines...
-      if 'Ph.' in line and line.index('Ph.') != 0:
-        split = [line[:line.index('Ph.')], line[line.index('Ph.'):]]
-        prefix = split[0]
-        lines.append(prefix)
-        line = split[1]
-      if 'Fax' in line and line.index('Fax') != 0:
-        split = [line[:line.index('Fax')], line[line.index('Fax'):]]
-        prefix = split[0]
-        lines.append(prefix)
-        line = split[1]
-      lines.append(line)
-      line = ''
-  return lines
 
 
 def group_rows(lines):
@@ -155,17 +130,13 @@ def generate_county_dict_list(formatted_rows):
 
 
 def fetch_data():
-  req = cache_request(PDF_URL, is_binary=True)
-  with BytesIO(req) as fh:
-    pdf_reader = PyPDF2.PdfFileReader(fh)
-    text = ''
-    for page_num in tqdm(range(pdf_reader.numPages)):
-      text += pdf_reader.getPage(page_num).extractText()
+  text = fetch_pdf_text(PDF_URL)
 
   # Remove Page # of #
   text = re.sub(r"\sPage\s\n\d\sof\s\n\d\s", "", text)
 
-  lines = make_lines(text)
+  text = re.sub(r"[^\n](Ph.|Fax)", r"\n\1", text)
+  lines = text.split('\n')
 
   # Remove first couples of lines which are PDF header.
   lines = lines[9:]
