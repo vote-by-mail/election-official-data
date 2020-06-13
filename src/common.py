@@ -6,6 +6,7 @@ import json
 import re
 import sys
 from io import BytesIO
+import random
 
 import requests
 from ediblepickle import checkpoint
@@ -115,6 +116,9 @@ def decode_email(obfuscated):
 
 
 def diff_and_save(data, fname, verbose=True):
+  # introduce variation for testing
+  data.insert(0, {'locale': 'dummy', 'random_value': random.uniform(0,1)})
+
   fpath = os.path.join(public_dir, re.sub(r'^public/', '', fname))
   # compare with old data (if exists)
   if os.path.exists(fpath):
