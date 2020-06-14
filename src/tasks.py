@@ -1,4 +1,5 @@
 import os
+import sys
 import pkgutil
 import importlib
 import unittest
@@ -29,4 +30,6 @@ def collect(c, state):  # pylint: disable=unused-argument,invalid-name
 @task
 def test(c):  # pylint: disable=unused-argument,invalid-name
   suite = unittest.TestLoader().discover('tests')
-  unittest.TextTestRunner().run(suite)
+  result = unittest.TextTestRunner().run(suite)
+  if not result.wasSuccessful():
+    sys.exit(1)
