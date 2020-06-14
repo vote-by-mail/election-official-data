@@ -11,21 +11,21 @@ def publics():
 
 
 class TestPublic(unittest.TestCase):
-  def assert_nonempty_string(self, x, allow_none=True, regex=None, stripped=True, titled=True):  # pylint: disable=too-many-arguments
-    if allow_none and x is None:
+  def assert_nonempty_string(self, val, allow_none=True, regex=None, stripped=True, titled=True):  # pylint: disable=too-many-arguments
+    if allow_none and val is None:
       return
-    self.assertIsInstance(x, str)
-    self.assertIsNot(x, '')
+    self.assertIsInstance(val, str)
+    self.assertIsNot(val, '')
 
     if stripped:
-      self.assertEqual(x, x.strip())
+      self.assertEqual(val, val.strip())
 
     if titled:
-      self.assertNotEqual(x, x.lower())
-      self.assertNotEqual(x, x.upper())
+      self.assertNotEqual(val, val.lower())
+      self.assertNotEqual(val, val.upper())
 
     if regex:
-      self.assertTrue(regex.search(x))
+      self.assertTrue(regex.search(val))
 
   def assert_string_list(self, list_, allow_none=True, regex=None):
     if allow_none and list_ is None:
@@ -33,38 +33,38 @@ class TestPublic(unittest.TestCase):
 
     self.assertIsInstance(list_, list)
     self.assertEqual(len(list_), len(set(list_)))
-    for x in list_:
-      self.assertIsInstance(x, str)
+    for val in list_:
+      self.assertIsInstance(val, str)
 
       if regex:
-        self.assertTrue(regex.search(x), f'"{x}" does not match regex "{regex.pattern}"')
+        self.assertTrue(regex.search(val), f'"{val}" does not match regex "{regex.pattern}"')
       else:
-        self.assertTrue(x)
+        self.assertTrue(val)
 
   @parameterized.expand(publics)
-  def test_state(self, public_file):
-    with open(public_file) as fh:
-      data = json.load(fh)
+  def test_state(self, public_filename):
+    with open(public_filename) as public_file:
+      data = json.load(public_file)
 
     self.assertIsInstance(data, list)
-    if 'alaska' in public_file:
+    if 'alaska' in public_filename:
       self.assertEqual(len(data), 1)
     else:
       self.assertGreater(len(data), 10)
 
-    for d in data:
-      self.assert_nonempty_string(d.get('locale'), allow_none=False)
-      self.assert_nonempty_string(d.get('official'), titled=False)
+    for datum in data:
+      self.assert_nonempty_string(datum.get('locale'), allow_none=False)
+      self.assert_nonempty_string(datum.get('official'), titled=False)
 
-      self.assert_nonempty_string(d.get('city'))
-      self.assert_nonempty_string(d.get('county'), regex=re.compile(' County$'))
+      self.assert_nonempty_string(datum.get('city'))
+      self.assert_nonempty_string(datum.get('county'), regex=re.compile(' County$'))
 
       self.assert_string_list(
-        d.get('emails'),
+        datum.get('emails'),
         regex=re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
       )
       self.assert_string_list(
-        d.get('faxes'),
+        datum.get('faxes'),
         regex=re.compile(r'^\D*1?\D*\d{3}\D*\d{3}\D*\d{4}\D*$')
       )
 

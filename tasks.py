@@ -5,17 +5,17 @@ VENV_ACTIVATE = "venv\\Scripts\\activate" if os.name == 'nt' else ". ./venv/bin/
 
 
 @task
-def collect(c, state):
+def collect(c, state):  # pylint: disable=invalid-name
   c.run(f"{VENV_ACTIVATE} && cd src && inv collect {state}")
 
 
 @task
-def lint(c):
+def lint(c):  # pylint: disable=invalid-name
   c.run(f"{VENV_ACTIVATE} && pylint tasks.py src --rcfile=.pylintrc")
 
 
 @task
-def lintwarn(c):
+def lintwarn(c):  # pylint: disable=invalid-name
   '''
   This is temporary and used to identify cases where certain warning flags are showing up
   Remove me when I no longer generate warnings.
@@ -25,5 +25,5 @@ def lintwarn(c):
 
 
 @task
-def test(c):
+def test(c):  # pylint: disable=invalid-name
   c.run(f"{VENV_ACTIVATE} && cd src && inv test")

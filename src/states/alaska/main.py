@@ -32,8 +32,7 @@ def fetch_data():
       email_address = email['href'].replace('mailto:', '')
     data['emails'].append(email_address)
 
-  for p in soup.find_all('p'):
-    text = p.text
+  for text in [p.text for p in soup.find_all('p')]:
     if 'Fax' in text:
       data['faxes'].append(extract_phone_number(text))
     elif 'Phone' in text or 'Toll-Free' in text:
