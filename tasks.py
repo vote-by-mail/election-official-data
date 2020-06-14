@@ -15,15 +15,5 @@ def lint(c):  # pylint: disable=invalid-name
 
 
 @task
-def lintwarn(c):  # pylint: disable=invalid-name
-  '''
-  This is temporary and used to identify cases where certain warning flags are showing up
-  Remove me when I no longer generate warnings.
-  '''
-  disable = "--disable=missing-module-docstring,missing-class-docstring,missing-function-docstring"
-  c.run(f"{VENV_ACTIVATE} && pylint tasks.py src --rcfile=.pylintrc --exit-zero --enable=all {disable} --reports=y")
-
-
-@task
 def test(c):  # pylint: disable=invalid-name
   c.run(f"{VENV_ACTIVATE} && cd src && inv test")

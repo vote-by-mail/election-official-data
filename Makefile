@@ -21,9 +21,6 @@ jupyter:
 	
 lint:
 	source venv/bin/activate && inv lint
-	
-lintwarn:
-	source venv/bin/activate && inv lintwarn
 
 test:
 	source venv/bin/activate && inv test
