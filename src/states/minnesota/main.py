@@ -1,42 +1,23 @@
 import re
 from bs4 import BeautifulSoup
-from bs4.element import NavigableString, Tag
 from common import cache_request
 
 BASE_URL = 'https://www.sos.state.mn.us/elections-voting/find-county-election-office/'
 
-
-def line_gen(siblings):
-  text = ''
-  for x in siblings:
-    if isinstance(x, NavigableString):
-      text += x.strip()
-    elif isinstance(x, Tag) and x.name == 'br':
-      yield text
-      text = ''
-    elif isinstance(x, Tag) and x.name == 'span':
-      text += x.text.strip()
-    elif isinstance(x, Tag) and x.name == 'h3':
-      yield text
-      return
+re_lines = re.compile(r'(?<=Absentee voting contact)\s*(.*?)\s*'
+                      + r'Phone:\s*([0-9\-]+)(?:\s*ext\s*\d+)?\s*Fax:\s*([0-9\-]+)\s*Email:\s*(\S+)',
+                      flags=re.DOTALL)
 
 
 def parse_county(county, datum):
-  absentee_voting_contact = datum.find('h3', class_='contentpage-h3', text='Absentee voting contact')
-
-  _iter = line_gen(absentee_voting_contact.next_siblings)
-
-  name = next(_iter)
-  phone = next(_iter)
-  fax = next(_iter)
-  email = next(_iter)
+  lines = re_lines.findall(datum.get_text('\n'))[0]
   return {
     'locale': county.text,
     'county': county.text,
-    'official': name,
-    'phones': [re.search(r'Phone: ([0-9\-]+)', phone).group(1)],
-    'faxes': [re.search(r'Fax: ([0-9\-]+)', fax).group(1)],
-    'emails': [re.search(r'Email:\s*(\S+)', email).group(1)],
+    'official': lines[0],
+    'phones': [lines[1]],
+    'faxes': [lines[2]],
+    'emails': [lines[3]],
   }
 
 
