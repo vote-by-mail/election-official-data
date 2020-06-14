@@ -2,18 +2,15 @@ import re
 from bs4 import BeautifulSoup
 from common import cache_request, decode_email
 
-re_recorder_str = r'(?P<recorder>\S.*\S)\s*\n.*County Recorder\s*Physical:\s*(?P<physical>\S.*\S)\s*'
-re_recorder_str += r'Mailing:\s*(?P<mailing>\S.*\S)\s*(?P<city_state_zip>\S.*\d{5}(-\d+)?)'
-re_recorder = re.compile(re_recorder_str, flags=re.MULTILINE)
-
-re_director_str = r'(?P<director>\S.*\S)\s*\n.*County\s*\w*\s*Director.*\n\s*Physical:\s*(?P<physical>\S.*\S)\s*'
-re_director_str += r'Mailing:\s*(?P<mailing>\S.*\S)\s*(?P<city_state_zip>\S.*\d{5}(-\d+)?)\s'
-re_director = re.compile(re_director_str, flags=re.MULTILINE)
-
-re_director2_str = r'(?P<director>\S.*\S)\s*\n.*County\s*\w*\s*Director.*\n\s*'
-re_director2_str += r'(?P<full_address>\S*(.|\n)*?\d{5}(-\d+)?)\s'
-re_director2 = re.compile(re_director2_str, flags=re.MULTILINE)
-
+re_recorder = re.compile(r'(?P<recorder>\S.*\S)\s*\n.*County Recorder\s*Physical:\s*(?P<physical>\S.*\S)\s*'
+                         + r'Mailing:\s*(?P<mailing>\S.*\S)\s*(?P<city_state_zip>\S.*\d{5}(-\d+)?)',
+                         flags=re.MULTILINE)
+re_director = re.compile(r'(?P<director>\S.*\S)\s*\n.*County\s*\w*\s*Director.*\n\s*Physical:\s*(?P<physical>\S.*\S)\s*'
+                         + r'Mailing:\s*(?P<mailing>\S.*\S)\s*(?P<city_state_zip>\S.*\d{5}(-\d+)?)\s',
+                         flags=re.MULTILINE)
+re_director2 = re.compile(r'(?P<director>\S.*\S)\s*\n.*County\s*\w*\s*Director.*\n\s*'
+                          + r'(?P<full_address>\S*(.|\n)*?\d{5}(-\d+)?)\s',
+                          flags=re.MULTILINE)
 re_extra_spaces = re.compile(r'[^\S\n]+')
 re_recorder2 = re.compile(r'(?P<recorder>\S.*\S)\s*\n.*County Recorder\s*(?P<full_address>\S(.|\n)*?\d{5}(-\d+)?)\s',
                           flags=re.MULTILINE)

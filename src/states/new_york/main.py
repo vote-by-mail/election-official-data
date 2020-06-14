@@ -2,9 +2,9 @@ import re
 from bs4 import BeautifulSoup
 from common import cache_request
 
-re_locale_address_str = r'(?P<locale>\S([^\S\n]|\w)*\s*County)\s*Board of Elections\s*'
-re_locale_address_str += r'(?P<address>\S.*\d{5}(-\d+)?)\s*'
-re_locale_address = re.compile(re_locale_address_str, flags=re.MULTILINE + re.DOTALL)
+re_locale_address = re.compile(r'(?P<locale>\S([^\S\n]|\w)*\s*County)\s*Board of Elections\s*'
+                               + r'(?P<address>\S.*\d{5}(-\d+)?)\s*',
+                               flags=re.MULTILINE + re.DOTALL)
 
 re_extra_spaces = re.compile(r'[^\S\n]+')
 re_phone_line = re.compile(r'Phone:\s*(.*)\n')

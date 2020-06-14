@@ -20,14 +20,14 @@ def parse_contact_line(line):
     return {}
   parsed = line.split(':')
   if len(parsed) == 2:
-    k, v = parsed
-    return {k.strip(): v.strip()}
+    k, val = parsed
+    return {k.strip(): val.strip()}
   return {}
 
 
-def parse_contact(h4):
-  title = h4.text
-  line1 = h4.next_element.next_element
+def parse_contact(h4_elem):
+  title = h4_elem.text
+  line1 = h4_elem.next_element.next_element
   line2 = line1.next_element.next_element
   if title.endswith('Address:'):
     return {
