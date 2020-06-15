@@ -32,14 +32,16 @@ interface Contact {
 **NB:**, fields with a question mark (e.g. `county?`) indicate that the value may possibly be empty, i.e. no such key exists.  If no values are provided by the state, this is how it is indicated.
 
 ## Adding a New State
-Each state's crawler is put under it's own folder (e.g. `states/new_york/main.py`) with potentially other files in the folder.
-- We use `cache_request` to reqeust webpages so that the results are saved to a local cache for faster development.
-- You can invoke the file using PyInvoke, i.e. 
+Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`), with potentially other files in the folder.
+- The goal is for each state's crawler to fetch and process all of its required inputs without human intervention, so that we can easily re-run scripts periodically to collect fresh data.
+- We use `cache_request` from `common.py` to request webpages so that the results are saved to a local cache for faster development. The `common` module also contains several other functions which may be useful.
+- We generally avoid using intermediate data files, but if required these are saved in the same common cache folder for ease of clearing for fresh runs.
+- Each state's `main.py` should include a function named `fetch_data()`, which will be called using PyInvoke using 
 
   ```inv collect new_york```
 
-- The results are then saved in the above [json format](#Data_Format).
-- Once you have the data, verify that it works by runnin tests:
+- The results are then sorted using `normalize_state` from `common.py` and saved in the above [json format](#Data_Format).
+- Once you have the data, verify that it works by running tests:
 
   ```make test```
 
@@ -49,6 +51,7 @@ Each state's crawler is put under it's own folder (e.g. `states/new_york/main.py
 Please submit code via pull requests, ideally from this repo if you have access or from your own fork if you do not.
 - We strive to only use [rebase merges](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
 - Please don't save changes to the Jupyter notebook `analysis/Analysis.ipynb` (it will break your rebase merge).
+- This repository has a continuous integration workflow to run pylint and tests on pull requests.
 
 ## Notes on Deploying
 To update a version, tag the commit with a bumped [semvar version](https://semver.org/) and push the tag.  Admittedly we are a little loose on the definition of a "minor" vs "patch" increment.  For example, if the previous version was `1.4.0` and we chose to increment to `1.5.0`, we would deploy using:
