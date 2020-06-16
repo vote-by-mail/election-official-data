@@ -18,48 +18,43 @@ jobs:
       with:
         path: 'code_repo'
         #ref: 'master'
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7
-    - name: Create venv and install dependencies
-      run: |
-        pwd
-        cd code_repo
-        make create-install
-    - name: Collect Alaska
-      run: |
-        pwd
-        cd code_repo
-        source venv/bin/activate && inv collect alaska
-    - name: Collect Wyoming
-      run: |
-        pwd
-        cd code_repo
-        source venv/bin/activate && inv collect wyoming
+    #- name: Set up Python 3.7
+    #  uses: actions/setup-python@v2
+    #  with:
+    #    python-version: 3.7
+    #- name: Create venv and install dependencies
+    #  run: |
+    #    pwd
+    #    cd code_repo
+    #    make create-install
+    #- name: Collect Alaska
+    #  run: |
+    #    pwd
+    #    cd code_repo
+    #    source venv/bin/activate && inv collect alaska
+    #- name: Collect Wyoming
+    #  run: |
+    #    pwd
+    #    cd code_repo
+    #    source venv/bin/activate && inv collect wyoming
     - name: Output list of new data files
       run: |
-        pwd
-        cd code_repo
-        ls -ls public
-    - name: Test new data files
-      run: |
-        pwd
-        cd code_repo
-        make test
+        ls -ls code_repo/public
+    #- name: Test new data files
+    #  run: |
+    #    pwd
+    #    cd code_repo
+    #    make test
     - name: Checkout data repo
       uses: actions/checkout@v2
       with:
         path: 'data_repo'
-        #repository: ''
-        ref: 'collect-data'
+        repository: 'election-official-data'
     - name: Move files to data repo
-      #mkdir -p public/`date +%Y-%m-%d_%H%M`
       run: |
-        pwd
-        cd data_repo
-        ls -ls public
-        mv ../code_repo/public/*.json public -f
+        mkdir -p data_repo/public/`date +%Y-%m-%d_%H%M`
+        ls -ls data_repo/public
+        mv code_repo/public/*.json data_repo/public -f
     - name: Commit files
       run: |
         pwd
@@ -72,6 +67,7 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         directory: 'data_repo'
-        branch: 'collect-data'
+        repository: 'election-official-data'
+        branch: 'data'
         github_token: ${{ secrets.GITHUB_TOKEN }}
         force: true
