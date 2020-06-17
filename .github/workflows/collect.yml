@@ -6,6 +6,8 @@ name: Collect data
 on:
   push:
     branches: [ auto-collect ]
+  schedule:
+    - cron: '0 0 * * 1'
 
 jobs:
   build:
@@ -17,44 +19,47 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: 'code_repo'
-        #ref: 'master'
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
+    #- name: Install xvfb for PyQt5
+    #  run: |
+    #    sudo apt install -y xvfb x11-utils libxkbcommon-x11-0
     - name: Create venv and install dependencies
       run: |
         pwd
         cd code_repo
         make create-install
-    - name: Collect Alaska
+    - name: Remove old data files
+      run: rm code_repo/public/*.json
+    - name: Collect Nevada
+      env:
+        QT_QPA_PLATFORM: "minimal"
+        QT_DEBUG_PLUGINS: 1
       run: |
         pwd
         cd code_repo
-        source venv/bin/activate && inv collect alaska
-    - name: Collect Wyoming
-      run: |
-        pwd
-        cd code_repo
-        source venv/bin/activate && inv collect wyoming
-    - name: Output list of new data files
-      run: |
-        pwd
-        cd code_repo
-        ls -ls public
+        source venv/bin/activate && inv collect nevada
+    #xvfb-run 
+    
+    #- name: Collect github-all
+    #  run: |
+    #    pwd
+    #    cd code_repo
+    #    source venv/bin/activate && inv collect github-all
     - name: Test new data files
       run: |
         pwd
         cd code_repo
+        ls -ls public
         make test
     - name: Checkout data repo
       uses: actions/checkout@v2
       with:
         path: 'data_repo'
-        #repository: ''
         ref: 'collect-data'
     - name: Move files to data repo
-      #mkdir -p public/`date +%Y-%m-%d_%H%M`
       run: |
         pwd
         cd data_repo
@@ -68,10 +73,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add ./public
         git commit -m "Collect new data files"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        directory: 'data_repo'
-        branch: 'collect-data'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        force: true
+        git push origin collect-data

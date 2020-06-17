@@ -73,7 +73,7 @@ class Render(QWebEngineView):  # pylint: disable=too-few-public-methods
   def __init__(self, url):
     self.html = None
     self.app = QApplication(sys.argv)
-    QWebEngineView.__init__(self)
+    super().__init__()
     self.loadFinished.connect(self._load_finished)
     self.load(QUrl(url))
     self.app.exec_()
@@ -90,7 +90,9 @@ class Render(QWebEngineView):  # pylint: disable=too-few-public-methods
 def cache_webkit(url, wait=None):
   if wait is not None:
     time.sleep(wait)
-  return Render(url).html
+  html = Render(url).html
+  print(html)
+  return html
 
 
 def to_list(item):
