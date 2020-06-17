@@ -36,7 +36,7 @@ Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`
 - The goal is for each state's crawler to fetch and process all of its required inputs without human intervention, so that we can easily re-run scripts periodically to collect fresh data.
 - We use `cache_request` from `common.py` to request webpages so that the results are saved to a local cache for faster development. The `common` module also contains several other functions which may be useful, including `cache_selenium` and `cache_webkit`.
 - We generally avoid using intermediate data files, but if required these are saved in the same common cache folder for ease of clearing for fresh runs.
-- Each state's `main.py` should include a function named `fetch_data()`, which will be called using PyInvoke using 
+- Each state's `main.py` should include a function named `fetch_data()`, which will be called using PyInvoke using (e.g.)
 
   ```inv collect new_york```
 
@@ -49,9 +49,9 @@ Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`
 
 ## Notes on Submitting Code
 Please submit code via pull requests, ideally from this repo if you have access or from your own fork if you do not.
+- This repository has a continuous integration (CI) workflow to run pylint and tests on pull requests.  The tests must pass for CI for code to be merged.
 - We strive to only use [rebase merges](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
 - Please don't save changes to the Jupyter notebook `analysis/Analysis.ipynb` (it will break your rebase merge).
-- This repository has a continuous integration workflow to run pylint and tests on pull requests.
 
 ## Notes on Deploying
 To update a version, tag the commit with a bumped [semvar version](https://semver.org/) and push the tag.  Admittedly we are a little loose on the definition of a "minor" vs "patch" increment.  For example, if the previous version was `1.4.0` and we chose to increment to `1.5.0`, we would deploy using:
