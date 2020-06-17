@@ -35,7 +35,6 @@ interface Contact {
 Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`), with potentially other files in the folder.
 - The goal is for each state's crawler to fetch and process all of its required inputs without human intervention, so that we can easily re-run scripts periodically to collect fresh data.
 - We use `cache_request` from `common.py` to request webpages so that the results are saved to a local cache for faster development. The `common` module also contains several other functions which may be useful, including `cache_selenium` and `cache_webkit`.
-- We generally avoid using intermediate data files, but if required these are saved in the same common cache folder for ease of clearing for fresh runs.
 - Each state's `main.py` should include a function named `fetch_data()`, which will be called using PyInvoke using (e.g.)
 
   ```inv collect new_york```
