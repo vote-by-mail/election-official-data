@@ -17,7 +17,7 @@ def get_locality_datum(id_):
     BASE_URL,
     method='POST',
     data={'LocalityUid': id_},
-    wait=random.uniform(.1, .3),
+    wait=random.uniform(.5, 1.5),
   )
   soup = BeautifulSoup(page, 'lxml')
   keys = soup.select('.resultsWrapper')[0].select('h5.display-lable')
