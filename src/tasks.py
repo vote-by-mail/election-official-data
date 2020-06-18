@@ -6,6 +6,9 @@ import unittest
 from invoke import task
 from common import normalize_state, diff_and_save
 
+# Having issues running webkit through GitHub actions
+WEBKIT_STATES = ['nevada']
+
 
 @task
 def collect(c, state):  # pylint: disable=unused-argument,invalid-name
@@ -14,9 +17,11 @@ def collect(c, state):  # pylint: disable=unused-argument,invalid-name
 
   if state in states_ispkg:
     states_ispkg = {state: states_ispkg[state]}
-  elif state == 'github-all':
-    # Nevada is not currently working with GitHub Actions
-    states_ispkg.pop('nevada')
+  elif state == 'webkit':
+    states_ispkg = {wk_state: states_ispkg[wk_state] for wk_state in WEBKIT_STATES}
+  elif state == 'no-webkit':
+    for wk_state in WEBKIT_STATES:
+      states_ispkg.pop(wk_state)
   elif state != 'all':
     print(f"State '{state}' not found.")
     print("Available states are:\n\t" + "\n\t".join(states_ispkg.keys()))

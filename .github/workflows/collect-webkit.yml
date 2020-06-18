@@ -1,11 +1,11 @@
-# This workflow will install Python dependencies, collect data for states that DON'T use webkit, and run tests on the generated files
+# This workflow will install Python dependencies, collect data for states that use webkit, and run tests on the generated files
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Collect data for non-webkit states
+name: Collect data for webkit states
 
 on:
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: '0 22 * * 0'
 
 jobs:
   build:
@@ -28,11 +28,14 @@ jobs:
         make create-install
     - name: Remove old data files
       run: rm code_repo/public/*.json
-    - name: Collect no-webkit states
+    - name: Collect webkit states
+      env:
+        QT_QPA_PLATFORM: "minimal"
+        QT_DEBUG_PLUGINS: 1
       run: |
         pwd
         cd code_repo
-        source venv/bin/activate && inv collect no-webkit
+        source venv/bin/activate && inv collect webkit
     - name: Test new data files
       run: |
         pwd
