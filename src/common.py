@@ -127,6 +127,8 @@ def diff_and_save(data, fname, verbose=True):
     print(f"Diff '{fname}': {diff}")
 
   # save new data
+  if not os.path.exists(public_dir):
+    os.mkdir(public_dir)
   with open(fpath, 'w') as cached_file:
     json.dump(data, cached_file)
 

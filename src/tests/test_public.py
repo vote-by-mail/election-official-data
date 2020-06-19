@@ -41,7 +41,7 @@ class TestPublic(unittest.TestCase):
       else:
         self.assertTrue(val)
 
-  @parameterized.expand(publics)
+  @parameterized.expand(publics, skip_on_empty=True)
   def test_state(self, public_filename):
     with open(public_filename) as public_file:
       data = json.load(public_file)

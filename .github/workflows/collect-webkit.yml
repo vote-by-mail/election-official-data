@@ -25,8 +25,6 @@ jobs:
       run: |
         cd code_repo
         make create-install
-    - name: Remove old data files
-      run: rm code_repo/public/*.json
     - name: Collect webkit states
       env:
         QT_QPA_PLATFORM: "minimal"
