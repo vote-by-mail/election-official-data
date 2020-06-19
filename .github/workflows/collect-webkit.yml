@@ -23,7 +23,6 @@ jobs:
         python-version: 3.7
     - name: Create venv and install dependencies
       run: |
-        pwd
         cd code_repo
         make create-install
     - name: Remove old data files
@@ -33,32 +32,25 @@ jobs:
         QT_QPA_PLATFORM: "minimal"
         QT_DEBUG_PLUGINS: 1
       run: |
-        pwd
         cd code_repo
         source venv/bin/activate && inv collect webkit
     - name: Test new data files
       run: |
-        pwd
         cd code_repo
-        ls -ls public
         make test
     - name: Checkout data repo
       uses: actions/checkout@v2
       with:
         path: 'data_repo'
-        ref: 'collect-data'
+        ref: 'public-data'
     - name: Move files to data repo
       run: |
-        pwd
-        cd data_repo
-        ls -ls public
-        mv ../code_repo/public/*.json public -f
+        mv code_repo/public/*.json data_repo/public -f
     - name: Commit files
       run: |
-        pwd
         cd data_repo
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add ./public
         git commit -m "Collect new data files"
-        git push origin collect-data
+        git push origin public-data
