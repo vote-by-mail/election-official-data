@@ -4,7 +4,7 @@ import pkgutil
 import importlib
 import unittest
 from invoke import task
-from common import normalize_state, diff_and_save
+from common import normalize_state, diff_and_save, public_dir
 
 # Having issues running webkit through GitHub actions
 WEBKIT_STATES = ['nevada']
@@ -37,6 +37,8 @@ def collect(c, state):  # pylint: disable=unused-argument,invalid-name
 
 @task
 def test(c):  # pylint: disable=unused-argument,invalid-name
+  publics = [file for file in os.listdir(public_dir) if file.endswith('.json')]
+  print(f"Files tested: {publics}")
   suite = unittest.TestLoader().discover('tests')
   result = unittest.TextTestRunner().run(suite)
   if not result.wasSuccessful():
