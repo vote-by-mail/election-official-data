@@ -37,6 +37,10 @@ def parse_county(text):
 
 def fetch_data():
   html = cache_webkit(BASE_URL)
+
+  # watch for occasional captcha requirement (no current way around it)
+  print(html)
+
   soup = BeautifulSoup(html, 'html.parser')
   text = soup.find('div', class_='content_area').get_text('\n', strip=True)
   text = unicodedata.normalize('NFKD', text)
