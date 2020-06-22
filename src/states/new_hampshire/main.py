@@ -1,17 +1,20 @@
-import csv
 import re
-from io import StringIO
 from bs4 import BeautifulSoup
-from common import cache_request
+from common import cache_request, to_list
 
 BASE_URL = 'https://app.sos.nh.gov/Public/Reports.aspx'
 
-re_email = re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
+re_row = re.compile(r'\n\s*(?P<city>.*?)(?:\s*WARD.*?)?\s*,\s*(?P<official>.+?)?\s*,'
+                    + r'\s*(?P<address>.+?)?\s*,\s*(?P<phone>[\d-]+)?\s*,\s*(?P<fax>[\d-]+)?\s*,'
+                    + r'\s*(?P<email>(?:[\w\-\.]+)@(?:[\w\-\.]+)\.(?:[a-zA-Z]{2,5}))?\s*,\s*(?P<url>.+?)?\s*,',
+                    re.MULTILINE)
+
 
 def assert_list_match(x, y):
   assert len(x) == len(y)
   for x_el, y_el in zip(x, y):
     assert x_el == y_el
+
 
 def assert_match(x, y):
   assert x['city'] == y['city']
@@ -21,14 +24,12 @@ def assert_match(x, y):
   assert_list_match(x['phones'], y['phones'])
   assert_list_match(x['faxes'], y['faxes'])
 
-def parse_csv(text):
+def parse_csv(csv_text):
   '''
   Each row represents a "Ward"; there may be multiple in each city
   This dedupes and asserts that the city entries are otherwise identical
   '''
-  csv_str = StringIO(text)
-  reader = csv.DictReader(csv_str, delimiter=',')
-  raw_clerk_data = [extract_clerk_data(row) for row in reader]
+  raw_clerk_data = [clean_row(row.groupdict()) for row in re_row.finditer(csv_text)]
 
   # dedupe -- only take first entry of each city
   # assert that all other values are the same
@@ -41,29 +42,15 @@ def parse_csv(text):
   return list(clerk_dict.values())
 
 
-def extract_clerk_data(row):
-  town_or_city = extract_city_without_ward(row)
+def clean_row(row):
+  row['city'] = ' '.join(x.capitalize() for x in row['city'].split())  # title() doesn't work on Beans's
+  row['official'] = row['official'].title() if row['official'] else None
+  row['locale'] = row['city']
+  row['emails'] = to_list(row.pop('email'))
+  row['phones'] = ['603-' + num for num in to_list(row.pop('phone'))]
+  row['faxes'] = ['603-' + num for num in to_list(row.pop('fax'))]
+  return row
 
-  clerk_data_entry = {
-    'city': town_or_city,
-    'address': row['Address'].strip(),
-    'locale': town_or_city,
-    'emails': [row['E-Mail']] if re_email.match(row['E-Mail']) else [],
-    'phones': ['603-' + row['Phone (area code 603)']] if row['Phone (area code 603)'] else [],
-    'faxes': ['603-' + row['Fax']] if(row['Fax']) else [],
-  }
-
-  if row['Clerk']:
-    clerk_data_entry['official'] = row['Clerk'].title()
-
-  return clerk_data_entry
-
-
-def extract_city_without_ward(row):
-  capitalized_city = ' '.join(x.capitalize() for x in row['Town/City'].split())
-
-  # removes everything after 'Ward' (no-op if 'Ward' isn't in string)
-  return capitalized_city.split(' Ward ')[0].strip()
 
 def fetch_data():
   # extract __viewstate and other form params for .aspx
