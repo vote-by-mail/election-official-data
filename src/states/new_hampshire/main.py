@@ -9,14 +9,14 @@ BASE_URL = 'https://app.sos.nh.gov/Public/Reports.aspx'
 re_email = re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
 
 def assert_list_match(x, y):
-  assert(len(x) == len(y))
+  assert len(x) == len(y)
   for x_el, y_el in zip(x, y):
-    assert(x_el == y_el)
+    assert x_el == y_el
 
 def assert_match(x, y):
-  assert(x['city'] == y['city'])
-  assert(x['address'] == y['address'])
-  assert(x['locale'] == y['locale'])
+  assert x['city'] == y['city']
+  assert x['address'] == y['address']
+  assert x['locale'] == y['locale']
   assert_list_match(x['emails'], y['emails'])
   assert_list_match(x['phones'], y['phones'])
   assert_list_match(x['faxes'], y['faxes'])
@@ -31,6 +31,7 @@ def parse_csv(text):
   raw_clerk_data = [extract_clerk_data(row) for row in reader]
 
   # dedupe -- only take first entry of each city
+  # assert that all other values are the same
   clerk_dict = {}
   for datum in raw_clerk_data:
     if datum['city'] in clerk_dict:
@@ -53,7 +54,7 @@ def extract_clerk_data(row):
   }
 
   if row['Clerk']:
-    clerk_data_entry['official'] = ' '.join(x.capitalize() for x in row['Clerk'].split())
+    clerk_data_entry['official'] = row['Clerk'].title()
 
   return clerk_data_entry
 
