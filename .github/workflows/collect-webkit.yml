@@ -52,5 +52,8 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add ./public
-        git commit -m "Collect new data files"
+        VERSION_DATE=`date +%Y-%m-%d`
+        git commit -m "Collect new data files $VERSION_DATE"
         git push origin public-data
+        git tag data/$VERSION_DATE
+        git push origin data/$VERSION_DATE
