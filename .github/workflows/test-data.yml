@@ -1,0 +1,43 @@
+# This workflow will install Python dependencies and run tests with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Test data
+
+on:
+  push:
+    branches: [ public-data ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Checkout code repo
+      uses: actions/checkout@v2
+      with:
+        path: 'code_repo'
+        ref: 'master'
+    - name: Checkout data repo
+      uses: actions/checkout@v2
+      with:
+        path: 'data_repo'
+        ref: 'public-data'
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Create venv and install dependencies
+      run: |
+        cd code_repo
+        make create-install
+    - name: Copy data files to code repo
+      run: |
+        mv data_repo/public/*.json code_repo/public -f
+    - name: Test data files
+      run: |
+        cd code_repo
+        make test
