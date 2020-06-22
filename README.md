@@ -9,7 +9,7 @@ To get started, run the `make create-install` command.  There are other useful c
 The real work is done by [PyInvoke](http://www.pyinvoke.org/), a simple task runner which was installed by the previous command.
 
 ## Data Format
-Data is saved in the `/public` folder by state (e.g. `florida.json`).  Each file is a json array of all election-official contacts for locale.  The format of the contacts depends on the state but supports (at a minimum) the following `typescript` interface
+Data is saved in the `/public` folder of the [public-data branch](https://github.com/mail-my-ballot/elections-officials/tree/public-data) by state (e.g. `florida.json`).  Each file is a json array of all election-official contacts for locale.  The format of the contacts depends on the state but supports (at a minimum) the following `typescript` interface
 ``` ts
 interface Contact {
   // each contact should have a locale and either a county or city
@@ -31,6 +31,10 @@ interface Contact {
 ``` 
 **NB:**, fields with a question mark (e.g. `county?`) indicate that the value may possibly be empty, i.e. no such key exists.  If no values are provided by the state, this is how it is indicated.
 
+State data is no longer saved in the `master` branch of this repo.
+
+Data releases are tagged with the date of collection using the format `data/2020-06-22`. Files that could not be collected or had no changes will be carried over from previous commits.
+
 ## Adding a New State
 Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`), with potentially other files in the folder.
 - The goal is for each state's crawler to fetch and process all of its required inputs without human intervention, so that we can easily re-run scripts periodically to collect fresh data.
@@ -45,6 +49,7 @@ Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`
   ```make test```
 
 - Also, rerun the Jupyter notebook `analysis/Analysis.ipynb` from scratch to update the analytics.  You can see how many fields you were able to parse.  To start the jupyter notebook, run `make jupyter`.  Run the notebook.  Make sure that you have all the values you need.  **Do not commit the notebook changes**.  Jsut throw them away.  They just block rebase merging.
+- To release a new data version between scheduled run dates, ***first make sure the data file passes all tests*** using `inv test`. Then, commit the passing data file to the [public-data branch](https://github.com/mail-my-ballot/elections-officials/tree/public-data) and tag that commit with a date version of format `data/2020-06-22`.
 
 ## Notes on Submitting Code
 Please submit code via pull requests, ideally from this repo if you have access or from your own fork if you do not.
