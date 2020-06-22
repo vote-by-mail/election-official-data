@@ -6,6 +6,8 @@ name: Collect data for non-webkit states
 on:
   schedule:
     - cron: '0 0 * * 1'
+  push:
+    branches: [ auto-collect ]
 
 jobs:
   build:

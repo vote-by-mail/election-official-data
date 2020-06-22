@@ -22,6 +22,7 @@ def collect(c, state):  # pylint: disable=unused-argument,invalid-name
   elif state == 'no-webkit':
     for wk_state in WEBKIT_STATES:
       states_ispkg.pop(wk_state)
+    states_ispkg = {state: states_ispkg[state] for state in ['new_hampshire', 'north_carolina']}
   elif state != 'all':
     print(f"State '{state}' not found.")
     print("Available states are:\n\t" + "\n\t".join(states_ispkg.keys()))
