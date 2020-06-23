@@ -1,0 +1,48 @@
+# This workflow will install Python dependencies, run all clean states using cached data, run tests, and lint
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run_from_cache:
+    runs-on: ubuntu-latest
+    steps:
+    - name: set env vars
+      run: echo "::set-env name=CACHE_DATETIME::$(/bin/date -u "+%Y%m%d_%H%M%S")"
+    - uses: actions/checkout@v2
+    - name: cache dependencies
+      uses: pat-s/always-upload-cache@v2.0.0
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: cache requests from recent
+      uses: pat-s/always-upload-cache@v2.0.0
+      with:
+        path: src/cache
+        key: requests-${{ env.CACHE_DATETIME }}
+        restore-keys: |
+           requests-
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: create-install (venv)
+      run: make create-install
+    - name: collect states
+      run: source venv/bin/activate && inv collect limited
+    - name: upload artifact public/*.json
+      uses: actions/upload-artifact@v2
+      with:
+        name: public-json
+        path: public/*.json
+    - name: test json files
+      run: make test
+    - name: lint with pylint
+      run: make lint

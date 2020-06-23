@@ -1,0 +1,74 @@
+# This workflow will install Python dependencies, run all clean states using a fresh cache,
+# run tests, push any changes to the public-data branch, and tag a new data version
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Public data
+
+on:
+  schedule:
+    - cron: '0 0 * * 5'
+
+jobs:
+  run_from_cache:
+    runs-on: ubuntu-latest
+    steps:
+    - name: set env vars
+      run: echo "::set-env name=CACHE_DATETIME::$(/bin/date -u "+%Y%m%d_%H%M%S")"
+    - uses: actions/checkout@v2
+    - name: cache dependencies
+      uses: pat-s/always-upload-cache@v2.0.0
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: cache requests from recent
+      uses: pat-s/always-upload-cache@v2.0.0
+      with:
+        path: src/cache
+        key: requests-${{ env.CACHE_DATETIME }}
+        # leave out restore-keys to collect all fresh data
+        restore-keys: |
+           requests-
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: create-install (venv)
+      run: make create-install
+    - name: collect states
+      run: source venv/bin/activate && inv collect limited
+    - name: test json files
+      run: make test
+    - name: upload artifact public/*.json
+      uses: actions/upload-artifact@v2
+      with:
+        name: public-json
+        path: public/*.json
+
+  push_data_and_tag:
+    needs: run_from_cache
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: 'public-data'
+    - name: download artifact public/*.json
+      uses: actions/download-artifact@v2
+      with:
+        name: public-json
+        path: public
+    - name: add files
+      run: git add ./public
+    - name: set env vars
+      run: |
+        echo "::set-env name=COMMIT_DATE::$(/bin/date -u "+%Y-%m-%d")"
+        echo "::set-env name=COMMIT_STATUS::$(git status -s -uno)"
+    - name: commit changes
+      if: env.COMMIT_STATUS
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m "Collect new data files $COMMIT_DATE"
+        git push origin public-data
+        git tag data/$COMMIT_DATE
+        git push origin data/$COMMIT_DATE
