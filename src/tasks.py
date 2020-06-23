@@ -3,9 +3,8 @@ import sys
 import pkgutil
 import importlib
 import unittest
-import glob
 from invoke import task
-from common import normalize_state, diff_and_save, public_dir, work_dir
+from common import normalize_state, diff_and_save, public_dir
 
 SKIP_STATES = ['nevada']
 
