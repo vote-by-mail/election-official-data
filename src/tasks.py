@@ -3,11 +3,11 @@ import sys
 import pkgutil
 import importlib
 import unittest
+import glob
 from invoke import task
-from common import normalize_state, diff_and_save, public_dir
+from common import normalize_state, diff_and_save, public_dir, work_dir
 
-# Having issues running webkit through GitHub actions
-WEBKIT_STATES = ['nevada']
+SKIP_STATES = ['nevada']
 
 
 @task
@@ -17,12 +17,9 @@ def collect(c, state):  # pylint: disable=unused-argument,invalid-name
 
   if state in states_ispkg:
     states_ispkg = {state: states_ispkg[state]}
-  elif state == 'webkit':
-    states_ispkg = {wk_state: states_ispkg[wk_state] for wk_state in WEBKIT_STATES}
-  elif state == 'no-webkit':
-    for wk_state in WEBKIT_STATES:
-      states_ispkg.pop(wk_state)
-    states_ispkg = {state: states_ispkg[state] for state in ['new_hampshire', 'north_carolina']}
+  elif state == 'limited':
+    for skip in SKIP_STATES:
+      states_ispkg.pop(skip)
   elif state != 'all':
     print(f"State '{state}' not found.")
     print("Available states are:\n\t" + "\n\t".join(states_ispkg.keys()))
