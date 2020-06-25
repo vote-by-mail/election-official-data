@@ -6,6 +6,7 @@ import unittest
 from invoke import task
 from common import normalize_state, diff_and_save, public_dir
 
+# Nevada has issues with captchas and isn't ready for automatic runs
 SKIP_STATES = ['nevada']
 
 
