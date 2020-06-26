@@ -47,7 +47,7 @@ class TestPublic(unittest.TestCase):
       data = json.load(public_file)
 
     self.assertIsInstance(data, list)
-    if 'alaska' in public_filename:
+    if 'alaska' in public_filename or 'district_of_columbia' in public_filename:
       self.assertEqual(len(data), 1)
     else:
       self.assertGreater(len(data), 10)
