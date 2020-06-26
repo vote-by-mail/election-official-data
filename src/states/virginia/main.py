@@ -44,13 +44,12 @@ def get_locality_datum(id_, attempt=0):
       'physicalAddress': results.get('Physical Address'),
     }
     return {k: v for k, v in final.items() if v}
-  else:
-    cached_files = glob.glob(os.path.join(work_dir, '*.*'))
-    latest_file = max(cached_files, key=os.path.getctime)
-    logging.warn(f"error in Virginia file; deleting cached file {latest_file}; retry after wait")
-    os.remove(latest_file)
-    sleep(30)
-    return get_locality_datum(id_, attempt + 1)
+  cached_files = glob.glob(os.path.join(work_dir, '*.*'))
+  latest_file = max(cached_files, key=os.path.getctime)
+  logging.warning("error in Virginia file; deleting cached file %s; retry after wait", latest_file)
+  os.remove(latest_file)
+  sleep(30)
+  return get_locality_datum(id_, attempt + 1)
 
 
 def fetch_data():

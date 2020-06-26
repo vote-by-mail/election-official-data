@@ -41,7 +41,7 @@ def fetch_data():
 
   # watch for occasional captcha requirement (no current way around it)
   if 'COUNTY CLERKS' not in html:
-    logging.warn(html)
+    logging.error(html)
 
   soup = BeautifulSoup(html, 'html.parser')
   text = soup.find('div', class_='content_area').get_text('\n', strip=True)
