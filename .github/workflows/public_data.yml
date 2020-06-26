@@ -16,11 +16,13 @@ jobs:
       run: echo "::set-env name=CACHE_DATETIME::$(/bin/date -u "+%Y%m%d_%H%M%S")"
     - uses: actions/checkout@v2
     - name: cache dependencies
+      # use always-upload-cache so that cache additions aren't lost if a test fails, e.g.
       uses: pat-s/always-upload-cache@v2.0.0
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
     - name: cache requests from recent
+      # use always-upload-cache so that cache additions aren't lost if a test fails, e.g.
       uses: pat-s/always-upload-cache@v2.0.0
       with:
         path: src/cache
