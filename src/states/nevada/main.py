@@ -1,5 +1,6 @@
 import unicodedata
 import re
+import logging
 from bs4 import BeautifulSoup
 from common import cache_webkit
 
@@ -39,7 +40,8 @@ def fetch_data():
   html = cache_webkit(BASE_URL)
 
   # watch for occasional captcha requirement (no current way around it)
-  print(html)
+  if 'COUNTY CLERKS' not in html:
+    logging.warn(html)
 
   soup = BeautifulSoup(html, 'html.parser')
   text = soup.find('div', class_='content_area').get_text('\n', strip=True)

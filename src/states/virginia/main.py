@@ -1,6 +1,7 @@
 import random
 from time import sleep
 import os
+import logging
 import glob
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -45,7 +46,7 @@ def get_locality_datum(id_, attempt=0):
   except IndexError:
     cached_files = glob.glob(os.path.join(work_dir, '*.*'))
     latest_file = max(cached_files, key=os.path.getctime)
-    print(f"error in Virginia file; deleting cached file {latest_file}; retry after wait")
+    logging.warn(f"error in Virginia file; deleting cached file {latest_file}; retry after wait")
     os.remove(latest_file)
     sleep(30)
     return get_locality_datum(id_, attempt + 1)
