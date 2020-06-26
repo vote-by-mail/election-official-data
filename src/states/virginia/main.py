@@ -26,9 +26,10 @@ def get_locality_datum(id_, attempt=0):
     wait=random.uniform(2, 3),
   )
   soup = BeautifulSoup(page, 'lxml')
-  try:
-    keys = soup.select('.resultsWrapper')[0].select('h5.display-lable')
-    vals = soup.select('.resultsWrapper')[0].select('p.display-field')
+  results_wrappers = soup.select('.resultsWrapper')
+  if results_wrappers:
+    keys = results_wrappers[0].select('h5.display-lable')
+    vals = results_wrappers[0].select('p.display-field')
     results = {key.text.strip(): val.text.strip() for key, val in zip(keys, vals)}
     locale = soup.select('select > option[selected="selected"]')[0].text.title()
     final = {
@@ -43,7 +44,7 @@ def get_locality_datum(id_, attempt=0):
       'physicalAddress': results.get('Physical Address'),
     }
     return {k: v for k, v in final.items() if v}
-  except IndexError:
+  else:
     cached_files = glob.glob(os.path.join(work_dir, '*.*'))
     latest_file = max(cached_files, key=os.path.getctime)
     logging.warn(f"error in Virginia file; deleting cached file {latest_file}; retry after wait")
