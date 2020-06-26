@@ -17,15 +17,19 @@ jobs:
       run: echo "::set-env name=CACHE_DATETIME::$(/bin/date -u "+%Y%m%d_%H%M%S")"
     - uses: actions/checkout@v2
     - name: cache dependencies
+      # use always-upload-cache so that cache additions aren't lost if a test fails, e.g.
       uses: pat-s/always-upload-cache@v2.0.0
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
     - name: cache requests from recent
+      # use always-upload-cache so that cache additions aren't lost if a test fails, e.g.
       uses: pat-s/always-upload-cache@v2.0.0
       with:
         path: src/cache
         key: requests-${{ env.CACHE_DATETIME }}
+        # cache key should be unique, thefore will use restore-keys
+        # to look for the next best option to restore (most recent starting with requests-)
         restore-keys: |
            requests-
     - uses: actions/setup-python@v2
@@ -37,6 +41,7 @@ jobs:
       run: source venv/bin/activate && inv collect limited
     - name: upload artifact public/*.json
       uses: actions/upload-artifact@v2
+      # .json files saved as artifact with run, can be examined for debugging
       with:
         name: public-json
         path: public/*.json
