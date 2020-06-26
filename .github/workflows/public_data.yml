@@ -5,6 +5,8 @@
 name: Public data
 
 on:
+  pull_request:
+    branches: [ master ]
   schedule:
     - cron: '0 0 * * *'
 
@@ -26,6 +28,8 @@ jobs:
         path: src/cache
         key: requests-${{ env.CACHE_DATETIME }}
         # leave out restore-keys to collect all fresh data
+        restore-keys: |
+           requests-
     - uses: actions/setup-python@v2
       with:
         python-version: 3.7
