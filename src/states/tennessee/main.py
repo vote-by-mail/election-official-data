@@ -12,7 +12,14 @@ re_email = re.compile(r'\S+@\S+.\S')
 re_fax = re.compile(r"Fax:\n?(\(?\d{3}\)?[\.\-\s]*\d{3}[\.\-\s]*\d{4})")
 re_phone = re.compile(r"Phone:\n?(\(?\d{3}\)?[\.\-\s]*\d{3}[\.\-\s]*\d{4})")
 re_url = re.compile(r"Web\s*Site:\n?(\S+?)\n")
-re_addr = re.compile(r"Address:\n((?:[^\n]+\n)+)Phone")
+re_mailing_addr = re.compile(r"\nMailing\s+Address:\n(.+?)\s*(\d{5}(?:-\d{4})?)\s*\n", re.MULTILINE + re.DOTALL)
+re_physical_addr = re.compile(r"\nAddress:\n(.+?)\s*(\d{5}(?:-\d{4})?)\s*\n", re.MULTILINE + re.DOTALL)
+
+
+def parse_addr(matches):
+  if matches:
+    return matches[0][0].replace('\n', ', ') + ', TN ' + matches[0][1]
+  return None
 
 
 def fetch_county(county_name):
@@ -22,7 +29,6 @@ def fetch_county(county_name):
   table = soup.select_one('table#data')
   text = re_dense_lines.sub('\n', table.get_text('\n'))
   url = re_url.findall(text)
-  addr = re_addr.findall(text)
   return {
     'locale': locale,
     'county': locale,
@@ -31,7 +37,8 @@ def fetch_county(county_name):
     'faxes': re_fax.findall(text),
     'phones': re_phone.findall(text),
     'url': url[0] if url else None,
-    'address': addr[0].strip().replace('\n', ', ') if addr else None,
+    'address': parse_addr(re_mailing_addr.findall(text)),
+    'physicalAddress': parse_addr(re_physical_addr.findall(text)),
   }
 
 
