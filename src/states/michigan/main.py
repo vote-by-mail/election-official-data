@@ -15,7 +15,8 @@ BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
 SSL_CERT = os.path.join(dir_path(__file__), 'michigan_chain.pem')
 
 re_official = re.compile(r'^\s*(.*?)\s*[,\n]')
-re_address = re.compile(r'\n(.*)\nPhone', flags=re.MULTILINE + re.DOTALL)
+re_phys_addr = re.compile(r'\n(.*?\d{5}(?:-\d{4})?)\n', flags=re.MULTILINE + re.DOTALL)
+re_mail_addr = re.compile(r'Mailing\s+Address:\s+(.*?\d{5}(?:-\d{4})?)\n', flags=re.MULTILINE + re.DOTALL)
 re_phone = re.compile(r'\nPhone:[^\n\S]*(.+?)\s*\n')
 re_fax = re.compile(r'Fax:[^\n\S]*(.+?)\s*\n')
 
@@ -28,6 +29,8 @@ def parse_jurisdiction(soup, jurisdiction_name, county_name, fipscode):
   county = county_name.title().strip()
   body = soup.find('div', class_='card-body')
   info = re.sub(r'\s*\n\s*', '\n', unicodedata.normalize('NFKD', body.text).strip())
+  phys_addr = re_phys_addr.findall(info)
+  mail_addr = re_mail_addr.findall(info)
   return {
     'locale': f'{city}:{county}',
     'city': city,
@@ -36,7 +39,8 @@ def parse_jurisdiction(soup, jurisdiction_name, county_name, fipscode):
     'phones': re_phone.findall(info),
     'faxes': re_fax.findall(info),
     'official': re_official.findall(info)[0],
-    'address': re_address.findall(info)[0].replace('\n', ', '),
+    'address': mail_addr[0].replace('\n', ', ') if mail_addr else None,
+    'physicalAddress': phys_addr[0].replace('\n', ', ') if phys_addr else None,
     'fipscode': fipscode,
   }
 
