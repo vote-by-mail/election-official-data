@@ -39,6 +39,10 @@ def webkit_key_namer(args, kwargs):
   return 'wk_' + key_namer(args, kwargs)
 
 
+def indiana_key_namer(args, kwargs):  # in common.py to avoid potential naming conflicts
+  return 'in_' + key_namer(args[1:], kwargs)
+
+
 work_dir = os.path.join(dir_path(__file__), 'cache')
 public_dir = os.path.join(dir_path(__file__), '..', 'public')
 
