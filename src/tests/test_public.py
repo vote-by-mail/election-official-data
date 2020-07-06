@@ -68,6 +68,12 @@ class TestPublic(unittest.TestCase):
         regex=re.compile(r'^\D*1?\D*\d{3}\D*\d{3}\D*\d{4}\D*$')
       )
 
+      # common address error is to leave title in field
+      for field in ('address', 'physicalAddress'):
+        addr = datum.get(field)
+        if addr:
+          self.assertNotIn('Address:', addr)
+
 
 if __name__ == '__main__':
   unittest.main()
