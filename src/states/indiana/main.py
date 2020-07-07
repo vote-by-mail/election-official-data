@@ -70,16 +70,19 @@ def fetch_emails():
   soup = BeautifulSoup(html, 'html.parser')
   xlsx_url = soup('a', text=re.compile(r'county.*e-?mail', re.IGNORECASE))[0]['href']
   xlsx = cache_request(xlsx_url, is_binary=True)
-  return pd.read_excel(xlsx).fillna(method='ffill').values
+  emails = pd.read_excel(xlsx).fillna(method='ffill').apply(lambda x: x.str.strip())
+  emails = emails.rename(columns={'Email': 'emails'})
+  emails['locale'] = emails['County'].str.title() + ' County'
+  return emails.groupby('locale')['emails'].apply(list)
 
 
 def fetch_data():
   counties, _ = cache_list()
-  data = {county_name.strip().title(): parse_county(county_name, county_text)
-          for county_name, (_, county_text) in tqdm(counties.items())}
-  for county_name, email in fetch_emails():
-    data.get(county_name.strip().title(), {}).setdefault('emails', []).append(email.strip())
-  return list(data.values())
+  data = pd.DataFrame(parse_county(county_name, county_text)
+                      for county_name, (_, county_text) in tqdm(counties.items()))
+  data = data.join(fetch_emails(), on='locale', how='left')
+  data['emails'] = data['emails'].apply(lambda x: x if isinstance(x, list) else [])
+  return data.to_dict(orient='records')
 
 
 if __name__ == '__main__':
