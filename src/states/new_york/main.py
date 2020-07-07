@@ -1,10 +1,11 @@
 import re
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 from common import cache_request
 
 re_locale_address = re.compile(r'(?P<locale>\S([^\S\n]|\w)*\s*County)\s*Board of Elections\s*'
                                + r'(?P<address>\S.*\d{5}(-\d+)?)\s*',
-                               flags=re.MULTILINE + re.DOTALL)
+                               re.MULTILINE | re.DOTALL)
 
 re_extra_spaces = re.compile(r'[^\S\n]+')
 re_phone_line = re.compile(r'Phone:\s*(.*)\n')
@@ -58,7 +59,7 @@ def fetch_data():
   text = cache_request('https://www.elections.ny.gov/CountyBoards.html')
   soup = BeautifulSoup(text, 'html.parser')
 
-  for county_area in soup.find_all('area'):
+  for county_area in tqdm(soup.find_all('area')):
     county_link = county_area['href']
     text = cache_request(county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))

@@ -10,7 +10,7 @@ from common import fetch_pdf_text, cache_request, to_list
 BASE_URL = 'https://elections.wi.gov/clerks/directory'
 POST_URL = 'https://myvote.wi.gov/DesktopModules/GabMyVoteModules/api/WhereDoIVote/SearchPollingPlace'
 
-re_city_chunk = re.compile(r'((?:CITY|TOWN|VILLAGE)\s+OF.+?)(?=\n(?:CITY|TOWN|VILLAGE) OF|Page \d+ of \d+)', flags=re.DOTALL)
+re_city_chunk = re.compile(r'((?:CITY|TOWN|VILLAGE)\s+OF.+?)(?=\n(?:CITY|TOWN|VILLAGE) OF|Page \d+ of \d+)', re.DOTALL)
 city_county_re = re.compile(r'(CITY|TOWN|VILLAGE)\s+OF\s+([A-Z.\- \n]+)\s+-\s+([A-Z.\- \n]+\s+COUNTY|MULTIPLE\s+COUNTIES)')
 clerk_re = re.compile(r'CLERK: (.*)')
 deputy_clerk_re = re.compile('DEPUTY CLERK: (.*)')

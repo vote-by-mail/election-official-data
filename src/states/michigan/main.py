@@ -15,8 +15,8 @@ BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
 SSL_CERT = os.path.join(dir_path(__file__), 'michigan_chain.pem')
 
 re_official = re.compile(r'^\s*(.*?)\s*[,\n]')
-re_phys_addr = re.compile(r'\n(.*?\d{5}(?:-\d{4})?)\n', flags=re.MULTILINE + re.DOTALL)
-re_mail_addr = re.compile(r'Mailing\s+Address:\s+(.*?\d{5}(?:-\d{4})?)\n', flags=re.MULTILINE + re.DOTALL)
+re_phys_addr = re.compile(r'\n(.*?\d{5}(?:-\d{4})?)\n', re.MULTILINE | re.DOTALL)
+re_mail_addr = re.compile(r'Mailing\s+Address:\s+(.*?\d{5}(?:-\d{4})?)\n', re.MULTILINE | re.DOTALL)
 re_phone = re.compile(r'\nPhone:[^\n\S]*(.+?)\s*\n')
 re_fax = re.compile(r'Fax:[^\n\S]*(.+?)\s*\n')
 
