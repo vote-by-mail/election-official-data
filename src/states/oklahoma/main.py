@@ -12,9 +12,9 @@ from common import cache_request
 BASE_URL = 'https://www.ok.gov/elections/About_Us/County_Election_Boards/'
 
 # covers county edge case where next line starts with *
-re_county_section = re.compile(r'(?<=COUNTY\n).*?(?=\n\n|\n\*)', flags=re.MULTILINE + re.DOTALL)
-re_phone_fax_section = re.compile(r'(?<=PHONE\n).*?(?=\n\n)', flags=re.MULTILINE + re.DOTALL)
-re_mailing_section = re.compile(r'(?<=MAILING ADDRESS\n).*?(?=\n\n)', flags=re.MULTILINE + re.DOTALL)
+re_county_section = re.compile(r'(?<=COUNTY\n).*?(?=\n\n|\n\*)', re.MULTILINE | re.DOTALL)
+re_phone_fax_section = re.compile(r'(?<=PHONE\n).*?(?=\n\n)', re.MULTILINE | re.DOTALL)
+re_mailing_section = re.compile(r'(?<=MAILING ADDRESS\n).*?(?=\n\n)', re.MULTILINE | re.DOTALL)
 re_number_space = re.compile(r'[\d]+\s*')
 
 

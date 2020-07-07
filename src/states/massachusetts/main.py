@@ -6,7 +6,7 @@ from common import cache_selenium
 BASE_URL = 'https://www.sec.state.ma.us/ele/eleclk/clkidx.htm'
 
 re_city = re.compile(r'^(.*?)\n')
-re_addr = re.compile(r'\n(.*?)\n\s*Phone', flags=re.MULTILINE + re.DOTALL)
+re_addr = re.compile(r'\n(.*?)\n\s*Phone', re.MULTILINE | re.DOTALL)
 re_phone = re.compile(r'\n\s*Phone:\s*(.*?)\n')
 re_fax = re.compile(r'\n\s*Fax:\s*(.*?)\n')
 re_email = re.compile(r'\n\s*Email:\s*(.*?)\n')

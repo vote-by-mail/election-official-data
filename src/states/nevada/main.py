@@ -7,7 +7,7 @@ from common import cache_webkit
 BASE_URL = 'https://www.nvsos.gov/sos/elections/voters/county-clerk-contact-information'
 
 re_county = re.compile(r'^([^\n]*?(?:CITY|COUNTY)[^\n]*?:.*?)(?=\n[^\n]*(?:CITY|COUNTY)(?![^\n]*Mailing))',
-                       re.DOTALL + re.MULTILINE)
+                       re.DOTALL | re.MULTILINE)
 re_locale = re.compile(r'^(.*(?:CITY|COUNTY).*)(?=:)', re.MULTILINE)
 re_official = re.compile(r'^.*\n(.*),.*\n')
 re_address = re.compile(r'^[^\n]*\n[^\n]*\n(.*?[\d-]{5,10})\n', re.DOTALL)

@@ -12,8 +12,8 @@ re_email = re.compile(r'\S+@\S+.\S')
 re_fax = re.compile(r"Fax:\n?(\(?\d{3}\)?[\.\-\s]*\d{3}[\.\-\s]*\d{4})")
 re_phone = re.compile(r"Phone:\n?(\(?\d{3}\)?[\.\-\s]*\d{3}[\.\-\s]*\d{4})")
 re_url = re.compile(r"Web\s*Site:\n?(\S+?)\n")
-re_mailing_addr = re.compile(r"\nMailing\s+Address:\n(.+?)\s*(\d{5}(?:-\d{4})?)\s*\n", re.MULTILINE + re.DOTALL)
-re_physical_addr = re.compile(r"\nAddress:\n(.+?)\s*(\d{5}(?:-\d{4})?)\s*\n", re.MULTILINE + re.DOTALL)
+re_mailing_addr = re.compile(r"\nMailing\s+Address:\n(.+?)\s*(\d{5}(?:-\d{4})?)\s*\n", re.MULTILINE | re.DOTALL)
+re_physical_addr = re.compile(r"\nAddress:\n(.+?)\s*(\d{5}(?:-\d{4})?)\s*\n", re.MULTILINE | re.DOTALL)
 
 
 def parse_addr(matches):

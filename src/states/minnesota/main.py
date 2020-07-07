@@ -6,7 +6,7 @@ BASE_URL = 'https://www.sos.state.mn.us/elections-voting/find-county-election-of
 
 re_lines = re.compile(r'(?<=Absentee voting contact)\s*(.*?)\s*'
                       + r'Phone:\s*([0-9\-]+)(?:\s*ext\s*\d+)?\s*Fax:\s*([0-9\-]+)\s*Email:\s*(\S+)',
-                      flags=re.DOTALL)
+                      re.DOTALL)
 
 
 def parse_county(county, datum):
