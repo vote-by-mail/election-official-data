@@ -56,6 +56,16 @@ The `public_data` GitHub Actions workflow will periodically run, collect fresh d
 
 To trigger this workflow between scheduled runs (e.g., after a new state is added to `master`), push any commit to the `trigger-public-data` branch. If updated data is found, this will also push a new data version tag as part of the normal workflow.
 
+For example,
+
+```bash
+git checkout trigger-public-data
+touch 20200714_unscheduled_run.txt
+git add 20200714_unscheduled_run.txt
+git commit -m "20200714 unscheduled run"
+git push origin trigger-public-data
+```
+
 ## Notes on Submitting Code
 Please submit code via pull requests, ideally from this repo if you have access or from your own fork if you do not.
 - This repository has a continuous integration (CI) workflow to run pylint and tests on pull requests.  The tests must pass for CI for code to be merged.
