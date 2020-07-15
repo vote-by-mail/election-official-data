@@ -54,7 +54,7 @@ Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`
 ## Refreshing Data between Scheduled Runs
 The `public_data` GitHub Actions workflow will periodically run, collect fresh data, commit any updated .json files to the `public-data` branch, and push a new data version tag in the format `data/yyyy-mm-dd`.
 
-To trigger this workflow between scheduled runs (e.g., after a new state is added to `master`), push any commit to the `trigger-public-data` branch. If updated data is found, this will also push a new data version tag as part of the normal workflow.
+To trigger this workflow between scheduled runs (i.e., after a new state is added to `master`), push any commit to the `trigger-public-data` branch. This will run the update workflow based on the latest code on master branch (admittedly, this is a bit of a hack to trigger a github action). If updated data is found, this will also push a new data version tag as part of the normal workflow.
 
 For example,
 
