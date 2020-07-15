@@ -6,8 +6,9 @@ name: Public data
 
 on:
   push:
+    branches:
     # allows for runs outside of normal schedule
-    branches: [ trigger-public-data ]
+      - 'trigger-public-data'
   schedule:
     - cron: '0 0 * * 1'
 
