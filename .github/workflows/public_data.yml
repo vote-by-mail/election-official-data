@@ -19,6 +19,8 @@ jobs:
       run: echo "::set-env name=CACHE_DATETIME::$(/bin/date -u "+%Y%m%d_%H%M%S")"
     - uses: actions/checkout@v2
       with:
+      # use latest code from master even if triggered by push to `trigger-public-data`
+      # (it's likely the `trigger-public-data` branch will fall behind on commits)
         ref: 'master'
     - name: cache dependencies
       # use always-upload-cache so that cache additions aren't lost if a test fails, e.g.
