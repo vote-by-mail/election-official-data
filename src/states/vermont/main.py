@@ -1,13 +1,12 @@
+import os
 import os.path
-from urllib.parse import urljoin
-from time import sleep
+import time
 from ediblepickle import checkpoint
 from selenium import webdriver
 import pandas as pd
 from common import key_namer, work_dir, to_list
 
 BASE_URL = 'https://sos.vermont.gov/elections/town-clerks/'
-XLSX_URL = 'https://sos.vermont.gov/media/fyvdm1j0/clerkcontactinfoexcel.xlsx'
 
 
 def vermont_key_namer(args, kwargs):
@@ -20,7 +19,8 @@ def vermont_key_namer(args, kwargs):
 def cache_xlsx(url=BASE_URL):  # use a keyword arg for key namer
   """
   Use Selenium to load the page with the link to the Excel file
-  and click the link to download (since download is protected)
+  and click the link to download (since download is protected).
+  Returns page_source (for debugging), contents of xlsx file
   """
   options = webdriver.ChromeOptions()
   options.add_argument('headless')
@@ -34,14 +34,19 @@ def cache_xlsx(url=BASE_URL):  # use a keyword arg for key namer
   })
   with webdriver.Chrome(options=options) as driver:
     driver.get(url)
-    sleep(.5)
-    print(driver.page_source)
+    time.sleep(.5)
     xlsx_link = driver.find_element_by_partial_link_text('Town Clerk contact information (Excel)')
     xlsx_link.click()
-    return None
+    time.sleep(1)  # wait for download
+    xlsx_path = os.path.join(work_dir, xlsx_link.get_attribute("href").split('/')[-1])
+    with open(xlsx_path, mode='rb') as xlsx_file:
+      xlsx = xlsx_file.read()
+    os.remove(xlsx_path)
+    return driver.page_source, xlsx
 
 
-def parse_df(xlsx_df):
+def parse_xlsx(xlsx):
+  xlsx_df = pd.read_excel(xlsx, skiprows=[0], dtype=str)
   xlsx_df = xlsx_df.where(xlsx_df.notna(), '').apply(lambda x: x.str.strip())
   data = pd.DataFrame()
   data['city'] = xlsx_df['Town']
@@ -59,8 +64,8 @@ def parse_df(xlsx_df):
 
 
 def fetch_data():
-  #xlsx = cache_xlsx()
-  return parse_df(pd.read_excel(os.path.join(work_dir, 'clerkcontactinfoexcel.xlsx'), skiprows=[0], dtype=str))
+  _, xlsx = cache_xlsx()
+  return parse_xlsx(xlsx)
 
 
 if __name__ == '__main__':
