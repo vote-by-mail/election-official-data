@@ -5,7 +5,7 @@ import logging
 import glob
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from common import cache_request, work_dir
+from common import cache_request, work_dir, to_list
 
 BASE_URL = 'https://vote.elections.virginia.gov/VoterInformation/PublicContactLookup'
 
@@ -37,8 +37,8 @@ def get_locality_datum(id_, attempt=0):
       'county': locale if locale.endswith('County') else None,
       'city': locale if not locale.endswith('County') else None,
       'official': results['Registrar'],
-      'emails': [results['Email']],
-      'faxes': [results['Fax']],
+      'emails': to_list(results['Email']),
+      'faxes': to_list(results['Fax']),
       'url': results.get('URL'),
       'address': results.get('Mailing Address') or results.get('Address'),
       'physicalAddress': results.get('Physical Address'),
