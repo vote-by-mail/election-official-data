@@ -34,7 +34,7 @@ interface Contact {
 
 State data is no longer saved in the `master` branch of this repo.
 
-Data releases are tagged with the date of collection using the format `data/2020-06-22`. Files that could not be collected or had no changes will be carried over from previous commits.
+Data releases are tagged with the date of collection using the format `data/yyyy-mm-dd`. Files that could not be collected or had no changes will be carried over from previous commits.
 
 ## Adding a New State
 Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`), with potentially other files in the folder.
@@ -50,7 +50,21 @@ Each state's crawler is put under its own folder (e.g. `states/new_york/main.py`
   ```make test```
 
 - Also, rerun the Jupyter notebook `analysis/Analysis.ipynb` from scratch to update the analytics.  You can see how many fields you were able to parse.  To start the jupyter notebook, run `make jupyter`.  Run the notebook.  Make sure that you have all the values you need.  **Do not commit the notebook changes**.  Jsut throw them away.  They just block rebase merging.
-- To release a new data version between scheduled run dates, ***first make sure the data file passes all tests*** using `inv test`. Then, commit the passing data file to the [public-data branch](https://github.com/vote-by-mail/election-official-data/tree/public-data) and tag that commit with a date version of format `data/2020-06-22`.
+
+## Refreshing Data between Scheduled Runs
+The `public_data` GitHub Actions workflow will periodically run, collect fresh data, commit any updated .json files to the `public-data` branch, and push a new data version tag in the format `data/yyyy-mm-dd`.
+
+To trigger this workflow between scheduled runs (i.e., after a new state is added to `master`), push any commit to the `trigger-public-data` branch. This will run the update workflow based on the latest code on master branch (admittedly, this is a bit of a hack to trigger a github action). If updated data is found, this will also push a new data version tag as part of the normal workflow.
+
+For example,
+
+```bash
+git checkout trigger-public-data
+touch 20200714_unscheduled_run.txt
+git add 20200714_unscheduled_run.txt
+git commit -m "20200714 unscheduled run"
+git push origin trigger-public-data
+```
 
 ## Notes on Submitting Code
 Please submit code via pull requests, ideally from this repo if you have access or from your own fork if you do not.
