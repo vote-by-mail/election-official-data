@@ -5,8 +5,7 @@ import re
 from parameterized import parameterized
 from common import public_dir
 
-re_email = re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
-re_phone_fax = re.compile(r'^\+1\d{10}$')
+re_phone_fax_test = re.compile(r'\+1\d{10}(x\d+)?')
 
 
 def publics():
