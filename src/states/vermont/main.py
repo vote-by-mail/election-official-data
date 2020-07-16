@@ -4,7 +4,7 @@ import time
 from ediblepickle import checkpoint
 from selenium import webdriver
 import pandas as pd
-from common import key_namer, work_dir, to_list
+from common import key_namer, work_dir
 
 BASE_URL = 'https://sos.vermont.gov/elections/town-clerks/'
 
@@ -53,9 +53,9 @@ def parse_xlsx(xlsx):
   data['county'] = xlsx_df['County'] + ' County'
   data['locale'] = xlsx_df['County'] + ':' + xlsx_df['Town']
   data['official'] = xlsx_df.apply(lambda x: x['First'] + ' ' + x['Last'] if x['First'] != 'Vacant' else None, axis=1)
-  data['phones'] = xlsx_df['Office Phone'].apply(to_list)
-  data['faxes'] = xlsx_df['Office Fax'].str.split(' or ').apply(lambda x: [y for y in x if y])
-  data['emails'] = xlsx_df["Clerk's Email Address"].str.split(' or ').apply(lambda x: [y for y in x if y])
+  data['phones'] = xlsx_df['Office Phone'].str.split(' or ').apply(lambda x: [y.strip() for y in x if y])
+  data['faxes'] = xlsx_df['Office Fax'].str.split(' or ').apply(lambda x: [y.strip() for y in x if y])
+  data['emails'] = xlsx_df["Clerk's Email Address"].str.split(' or ').apply(lambda x: [y.strip() for y in x if y])
   data['address'] = (xlsx_df['Office Mailing Address'] + ', ' + xlsx_df['City/Town:']
                      + ', ' + xlsx_df['State:'] + ' ' + xlsx_df['ZIP:'])
   data['physicalAddress'] = (xlsx_df['Physical Address'] + ', ' + xlsx_df['City/Town:.1']
