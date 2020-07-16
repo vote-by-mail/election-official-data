@@ -30,8 +30,8 @@ def parse_county(text):
     'locale': locale,
     'official': re_official.findall(text)[0],
     'address': re_address.findall(text)[0].replace('\n', ', '),
-    'phones': re_phone.findall(text),
-    'faxes': re_fax.findall(text),
+    'phones': [val.replace('VOTE', '8683') for val in re_phone.findall(text)],
+    'faxes': [val.replace('VOTE', '8683') for val in re_fax.findall(text)],
     'emails': re_email.findall(text),
   }
 
