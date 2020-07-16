@@ -20,7 +20,7 @@ def parse_county(county):
     'official': county['DirectorName'].title(),
     'emails': [county['Email']],
     'faxes': to_list(county['FaxNum']),
-    'phones': [join_fields(county, ' x', ['OfficePhoneNum', 'OfficePhoneNumExt'])],
+    'phones': to_list(county['OfficePhoneNum']),  # exclude OfficePhoneNumExt
     'address': join_fields(county, ', ', ['MailingAddr1', 'MailingAddr2', 'MailingAddrCSZ']),
     'physicalAddress': join_fields(county, ', ', ['PhysicalAddr1', 'PhysicalAddr2', 'PhysicalAddrCSZ']),
     'url': county['WebsiteAddr'],
