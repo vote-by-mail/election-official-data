@@ -19,3 +19,4 @@ pylint==2.5.2
 PyQt5==5.15.0
 PyQtWebEngine==5.15.0
 xlrd==1.2.0
+wget==3.2
