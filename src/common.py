@@ -135,10 +135,15 @@ def diff_and_save(data, fname, verbose=True):
   return diff
 
 
+re_to_e164 = re.compile(r'^\D*1?\D*(\d{3})\D*(\d{3})\D*(\d{4})\D*$')
+
+
 def normalize_state(data):
   ''' Return data with consistent ordering '''
   for datum in data:
     for key in datum.keys():
+      if key in ('phones', 'faxes'):  # reformat phones and faxes
+        datum[key] = [re_to_e164.sub(r'+1\g<1>\g<2>\g<3>', x) for x in datum[key]]
       if isinstance(datum[key], list):
         try:
           datum[key] = sorted(set(datum[key]))
