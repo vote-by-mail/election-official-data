@@ -5,6 +5,8 @@ from common import cache_request
 
 BASE_URL = 'https://sos.nebraska.gov/elections/election-officials-contact-information'
 
+re_phone_fax = re.compile(r'\d{3}\D*?\d{3}\D*?\d{4}')
+
 
 def get_key_text(_iter):
   while True:
@@ -56,8 +58,8 @@ def parse_county(county):
     'locale': county,
     'official': result['Name'],
     'emails': [result['Email Address']],
-    'faxes': [result['Fax Number']],
-    'phones': [result['Phone Number']],
+    'faxes': re_phone_fax.findall(result['Fax Number']),
+    'phones': re_phone_fax.findall(result['Phone Number']),
     'county': county,
     'address': result['Address'],
     'party': result['Party Affiliation'],
@@ -65,8 +67,8 @@ def parse_county(county):
 
 
 def fetch_data():
-  text = cache_request(BASE_URL)
-  soup = BeautifulSoup(text, 'lxml')
+  html = cache_request(BASE_URL)
+  soup = BeautifulSoup(html, 'lxml')
 
   counties = soup.select('div.field-items>div.field-item div.col-sm-6')
   data = [parse_county(county) for county in counties]
