@@ -20,10 +20,10 @@ interface Contact {
   city?: string             // city or township name
   official?: string         // name of election's official
   emails?: string[]         // array of emails
-  faxes?: string[]          // list of fax numbers
+  faxes?: string[]          // list of fax numbers in E.164 format
 
   // optional fields
-  phones?: string[]         // list of phone numbers
+  phones?: string[]         // list of phone numbers in E.164 format
   url?: string              // url for locale's election information
   address?: string          // mailing address data
   physicalAddress?: string  // physical address
@@ -31,6 +31,8 @@ interface Contact {
 }
 ```
 **NB:**, fields with a question mark (e.g. `county?`) indicate that the value may possibly be empty, i.e. no such key exists.  If no values are provided by the state, this is how it is indicated.
+
+Phone and fax numbers should be in [E.164 format](https://en.wikipedia.org/wiki/E.164) -- i.e. since all numbers are US, they should match the regex `'^\+1\d{10}$'`. Collecting a state calls `normalize_state` in `src/common.py`, which will automatically reformat phone and fax numbers that are close to E.164.
 
 State data is no longer saved in the `master` branch of this repo.
 
