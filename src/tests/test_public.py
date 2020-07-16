@@ -5,6 +5,9 @@ import re
 from parameterized import parameterized
 from common import public_dir
 
+re_email = re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
+re_phone_fax = re.compile(r'^\+1\d{10}$')
+
 
 def publics():
   return glob.glob(f'{public_dir}/*.json')
@@ -61,11 +64,15 @@ class TestPublic(unittest.TestCase):
 
       self.assert_string_list(
         datum.get('emails'),
-        regex=re.compile(r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
+        regex=re_email
       )
       self.assert_string_list(
         datum.get('faxes'),
-        regex=re.compile(r'^\D*1?\D*\d{3}\D*\d{3}\D*\d{4}\D*$')
+        regex=re_phone_fax
+      )
+      self.assert_string_list(
+        datum.get('phones'),
+        regex=re_phone_fax
       )
 
       # common address error is to leave title in field
