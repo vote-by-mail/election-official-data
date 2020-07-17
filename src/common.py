@@ -18,7 +18,7 @@ from PyPDF2 import PdfFileReader
 from tqdm import tqdm
 
 re_email = re.compile(r'([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})')
-re_to_e164 = re.compile(r'^\D*1?\D*(\d{3})\D*?(\d{3})\D*?(\d{4})\D*?(?:[xX]\D*?(\d+))?')
+re_to_e164 = re.compile(r'^\D*1?\D*(\d{3})\D*?(\d{3})\D*?(\d{4})(?:\D*?[xX]\D*?(\d+))?')
 
 
 def to_e164(text):
