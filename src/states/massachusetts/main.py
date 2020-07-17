@@ -7,9 +7,8 @@ BASE_URL = 'https://www.sec.state.ma.us/ele/eleclk/clkidx.htm'
 
 re_city = re.compile(r'^(.*?)\n')
 re_addr = re.compile(r'\n(.*?)\n\s*Phone', re.MULTILINE | re.DOTALL)
-
-re_phone = re.compile(r'\n\s*Phone:.*?(\d{3}\D*?\d{3}\D*?\d{4}).*\n')
-re_fax = re.compile(r'\n\s*Fax:.*?(\d{3}\D*?\d{3}\D*?\d{4}).*\n')
+re_phone = re.compile(r'\n\s*Phone:\s*(.*?)\n')
+re_fax = re.compile(r'\n\s*Fax:\s*(.*?)\n')
 re_email = re.compile(r'\n\s*Email:\s*(.*?)\n')
 re_url = re.compile(r'\n\s*Website:\s*(.*?)\n')
 
