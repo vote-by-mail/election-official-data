@@ -17,6 +17,7 @@ re_recorder2 = re.compile(r'(?P<recorder>\S.*\S)\s*\n.*County Recorder\s*(?P<ful
 re_phone_line = re_phone = re.compile(r'Phone\s*-?\s*(.*)\n')
 re_fax_line = re.compile(r'Fax\s*-?\s*(1?\D*\d{3}\D*\d{3}\D*\d{4})\D*\n')
 re_phone = re.compile(r'(\d{3}\D*\d{3}\D*\d{4})')
+re_encoded_email = re.compile(r'<h3>Vote by Mail Request.*?data-cfemail="(.*?)"', re.MULTILINE | re.DOTALL)
 
 
 def parse_county(soup):
@@ -31,7 +32,7 @@ def parse_county(soup):
   results['faxes'] = re_phone.findall(' '.join(fax_lines))
 
   results['url'] = soup.select('a[href^=http]')[0].get('href').strip()
-  results['emails'] = [decode_email(x.get('data-cfemail')) for x in soup.find_all('span', class_='__cf_email__')]
+  results['emails'] = [decode_email(re_encoded_email.findall(str(soup))[0]).strip()]
 
   # use County Recorder as the primary official since they handle voter registration
   recorder = (re_recorder.search(text) or re_recorder2.search(text)).groupdict()
