@@ -5,8 +5,8 @@ from common import cache_request, to_list
 BASE_URL = 'https://vip.sos.nd.gov/CountyAuditors.aspx'
 
 re_phfaxemail = re.compile(
-  r'\s*(?P<phone>\(?\s*\d{3}\s*\)?\s*\d{3}-?\d{4})\s*(?:.*?)?\n'  # ignore extension
-  + r'\s*(?P<fax>\(?\s*\d{3}\s*\)?\s*\d{3}-?\d{4})\s*\n'
+  r'\s*(?P<phone>\(?\s*\d{3}\s*\)?\s*\d{3}-?\d{4}.*?)\s*?\n'  # include extension
+  + r'\s*(?P<fax>\(?\s*\d{3}\s*\)?\s*\d{3}-?\d{4}.*?)\s*?\n'
   + r'\s*(?P<email>(?:[\w\-\.]+)@(?:[\w\-\.]+)\.(?:[a-zA-Z]{2,5}))\s*',
   re.MULTILINE
 )
