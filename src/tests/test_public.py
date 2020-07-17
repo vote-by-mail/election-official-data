@@ -3,7 +3,7 @@ import glob
 import json
 import re
 from parameterized import parameterized
-from common import public_dir
+from common import public_dir, re_email
 
 re_phone_fax_test = re.compile(r'\+1\d{10}(x\d+)?')
 
@@ -27,7 +27,8 @@ class TestPublic(unittest.TestCase):
       self.assertNotEqual(val, val.upper())
 
     if regex:
-      self.assertTrue(regex.search(val))
+      # fullmatch requires the whole string to match the pattern (i.e. no whitespace)
+      self.assertTrue(regex.fullmatch(val))
 
   def assert_string_list(self, list_, allow_none=True, regex=None):
     if allow_none and list_ is None:
@@ -39,7 +40,8 @@ class TestPublic(unittest.TestCase):
       self.assertIsInstance(val, str)
 
       if regex:
-        self.assertTrue(regex.search(val), f'"{val}" does not match regex "{regex.pattern}"')
+        # fullmatch requires the whole string to match the pattern (i.e. no whitespace)
+        self.assertTrue(regex.fullmatch(val), f'"{val}" does not match regex "{regex.pattern}"')
       else:
         self.assertTrue(val)
 
@@ -59,20 +61,12 @@ class TestPublic(unittest.TestCase):
       self.assert_nonempty_string(datum.get('official'), titled=False)
 
       self.assert_nonempty_string(datum.get('city'))
-      self.assert_nonempty_string(datum.get('county'), regex=re.compile(' County$'))
+      self.assert_nonempty_string(datum.get('county'), regex=re.compile('.* County'))
 
-      self.assert_string_list(
-        datum.get('emails'),
-        regex=re_email
-      )
-      self.assert_string_list(
-        datum.get('faxes'),
-        regex=re_phone_fax
-      )
-      self.assert_string_list(
-        datum.get('phones'),
-        regex=re_phone_fax
-      )
+      self.assert_string_list(datum.get('emails'), regex=re_email)
+
+      self.assert_string_list(datum.get('faxes'), regex=re_phone_fax_test)
+      self.assert_string_list(datum.get('phones'), regex=re_phone_fax_test)
 
       # common address error is to leave title in field
       for field in ('address', 'physicalAddress'):
