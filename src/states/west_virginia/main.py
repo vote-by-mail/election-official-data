@@ -5,7 +5,7 @@ from common import cache_request
 
 BASE_URL = 'https://sos.wv.gov/elections/Pages/CountyClerkDirectory.aspx'
 
-re_phone_fax = re.compile(r'\d{3}\D*?\d{3}\D*?\d{4}')
+re_phone_fax = re.compile(r'(\d{3}\D*?\d{3}\D*?\d{4}(?:\D*?[xX]\D*?\d+)?)')
 
 
 def parse_county(row):
