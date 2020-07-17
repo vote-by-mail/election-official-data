@@ -17,6 +17,16 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView  # pylint: disable=no-name-i
 from PyPDF2 import PdfFileReader
 from tqdm import tqdm
 
+re_email = re.compile(r'([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})')
+re_to_e164 = re.compile(r'^\D*1?\D*(\d{3})\D*?(\d{3})\D*?(\d{4})\D*?(?:[xX]\D*?(\d+))?\D*$')
+
+
+def to_e164(text):
+  m  = re_to_e164.match(text).groups()
+  if m[3]:  # phone/fax extension
+    return f"+1{m[0]}{m[1]}{m[2]}x{m[3]}"
+  return f"+1{m[0]}{m[1]}{m[2]}"
+
 
 def dir_path(_file_):
   return os.path.dirname(os.path.realpath(_file_))
@@ -135,15 +145,12 @@ def diff_and_save(data, fname, verbose=True):
   return diff
 
 
-re_to_e164 = re.compile(r'^\D*1?\D*(\d{3})\D*(\d{3})\D*(\d{4})\D*$')
-
-
 def normalize_state(data):
   ''' Return data with consistent ordering '''
   for datum in data:
     for key in datum.keys():
       if key in ('phones', 'faxes'):  # reformat phones and faxes
-        datum[key] = [re_to_e164.sub(r'+1\g<1>\g<2>\g<3>', x) for x in datum[key]]
+        datum[key] = [to_e164(x) for x in datum[key]]
       if isinstance(datum[key], list):
         try:
           datum[key] = sorted(set(datum[key]))
