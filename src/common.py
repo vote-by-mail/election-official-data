@@ -18,15 +18,14 @@ from PyPDF2 import PdfFileReader
 from tqdm import tqdm
 
 re_email = re.compile(r'([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})')
-re_to_e164 = re.compile(r'^\D*1?\D*(\d{3})\D*?(\d{3})\D*?(\d{4})\D*?(?:[xX]\D*?(\d+))?\D*$')
+re_to_e164 = re.compile(r'^\D*1?\D*(\d{3})\D*?(\d{3})\D*?(\d{4})\D*?(?:[xX]\D*?(\d+))?')
 
 
 def to_e164(text):
-  m  = re_to_e164.match(text).groups()
-  if m[3]:  # phone/fax extension
-    return f"+1{m[0]}{m[1]}{m[2]}x{m[3]}"
-  return f"+1{m[0]}{m[1]}{m[2]}"
-
+  grp = re_to_e164.match(text).groups()
+  if grp[3]:  # phone/fax extension
+    return f"+1{grp[0]}{grp[1]}{grp[2]}x{grp[3]}"
+  return f"+1{grp[0]}{grp[1]}{grp[2]}"
 
 def dir_path(_file_):
   return os.path.dirname(os.path.realpath(_file_))

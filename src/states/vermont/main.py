@@ -54,6 +54,8 @@ def parse_xlsx(xlsx):
   data['locale'] = xlsx_df['County'] + ':' + xlsx_df['Town']
   data['official'] = xlsx_df.apply(lambda x: x['First'] + ' ' + x['Last'] if x['First'] != 'Vacant' else None, axis=1)
   data['phones'] = xlsx_df['Office Phone'].str.split(' or ').apply(lambda x: [y.strip() for y in x if y])
+  # add area code if missing
+  data['phones'] = data['phones'].apply(lambda x: [f"802-{y}" if '802' not in y else y for y in x])
   data['faxes'] = xlsx_df['Office Fax'].str.split(' or ').apply(lambda x: [y.strip() for y in x if y])
   data['emails'] = xlsx_df["Clerk's Email Address"].str.split(' or ').apply(lambda x: [y.strip() for y in x if y])
   data['address'] = (xlsx_df['Office Mailing Address'] + ', ' + xlsx_df['City/Town:']
