@@ -8,7 +8,6 @@ re_recorder = re.compile(
   r'(?:Physical:\s*(?P<physicalAddress>(.|\n)*?)\s*Mailing:\s*)?'
   r'(?:(?P<address>(.|\n)*?\d{5}(?:-\d+)?))',
   re.MULTILINE)
-re_encoded_email = re.compile(r'<h3>Vote by Mail Request.*?data-cfemail="(.*?)"', re.MULTILINE | re.DOTALL)
 re_phone = re.compile(r'Phone\s*-?\s*(.*)\n')
 re_fax = re.compile(r'Fax\s*-?\s*(.*)\n')
 
@@ -27,7 +26,7 @@ def parse_county(soup):
     'county': county,
     'locale': county,
     'url': soup.select('a[href^=http]')[0].get('href').strip(),
-    'emails': [decode_email(re_encoded_email.findall(str(soup))[0]).strip()],
+    'emails': [decode_email(x.get('data-cfemail')) for x in soup.find_all('span', class_='__cf_email__')],
     'phones': [ph for phones in re_phone.findall(text) for ph in phones.split(' or ')],
     'faxes': [fax for faxes in re_fax.findall(text) for fax in faxes.split(' or ')],
   }
