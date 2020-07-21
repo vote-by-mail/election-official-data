@@ -19,6 +19,7 @@ mailing_address_re = re.compile(r'Mailing Address :([^:]+\n)+')
 phone_re = re.compile(r'Phone \d: ([()\d-]+)')
 fax_re = re.compile(r'Fax: ([()\d-]+)')
 url_re = re.compile(r'(https?://[^\s/$.?#].[^\s]*)')
+# actual data has included non-WI state addresses
 re_addr = re.compile(r'^(.+?),\s*(.+?),?\s*([A-Za-z]{2})\.?\s*([\d-]+)', re.IGNORECASE)
 
 
