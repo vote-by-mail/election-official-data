@@ -68,6 +68,19 @@ git commit -m "20200714 unscheduled run"
 git push origin trigger-public-data
 ```
 
+### Manually collecting data locally
+Some state code (i.e. Nevada) does not seem to work on Github Actions.  Instead, it needs to be run manually.  To do this, you must run the following commands (changing values for the tag as necessary)
+```
+git checkout master
+inv collect nevada
+cp public/nevada.json /tmp/.
+git checkout public-data
+cp /tmp/nevada.json public/.
+git commit -am 'Adding Nevada'
+git tag data/2020-08-07
+git push origin data/2020-08-07
+```
+
 ## Notes on Submitting Code
 Please submit code via pull requests, ideally from this repo if you have access or from your own fork if you do not.
 - This repository has a continuous integration (CI) workflow to run pylint and tests on pull requests.  The tests must pass for CI for code to be merged.
