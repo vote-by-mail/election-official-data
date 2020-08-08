@@ -26,7 +26,7 @@ def parse_locale(datum):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   text = cache_request(BASE_URL)
   if text.startswith('<plaintext>'):
     text = text[len('<plaintext>'):]

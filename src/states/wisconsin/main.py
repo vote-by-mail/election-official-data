@@ -50,17 +50,17 @@ def parse_city(text):
   return {k: strip_newline(v).title() if isinstance(v, str) else v for k, v in ret.items()}
 
 
-def parse_pdf():
+def parse_pdf(verbose=True):
   html = cache_request(BASE_URL)
   soup = BeautifulSoup(html, 'html.parser')
   pdf_url = soup.find('a', text=re.compile('^WI Municipal Clerks'))['href']
   text = fetch_pdf_text(pdf_url)
-  return [parse_city(city_chunk) for city_chunk in tqdm(re_city_chunk.findall(text))]
+  return [parse_city(city_chunk) for city_chunk in tqdm(re_city_chunk.findall(text), disable=not verbose)]
 
 
-def query_clerk_data(pdf_data):
+def query_clerk_data(pdf_data, verbose=True):
   clerk_data = []
-  for pdf_datum in tqdm(pdf_data):
+  for pdf_datum in tqdm(pdf_data, verbose=not verbose):
     for field in ['municipal_address', 'mailing_address']:
       if pdf_datum.get(field):
         street, city, _, zipcode = re_addr.search(pdf_datum.get(field)).groups()
@@ -120,9 +120,9 @@ def aggregate(pdf_data, qry_data):
   return df_final.to_dict(orient='records')
 
 
-def fetch_data():
-  pdf_data = parse_pdf()
-  qry_data = query_clerk_data(pdf_data)
+def fetch_data(verbose=True):
+  pdf_data = parse_pdf(verbose=verbose)
+  qry_data = query_clerk_data(pdf_data, verbose=verbose)
   data = aggregate(pdf_data, qry_data)
   return data
 

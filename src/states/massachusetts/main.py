@@ -35,7 +35,7 @@ def parse_html(html):
   return data
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_selenium(BASE_URL)
   data = parse_html(html)
   return data

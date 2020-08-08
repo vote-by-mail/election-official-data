@@ -129,7 +129,7 @@ def generate_county_dict_list(formatted_rows):
   return counties
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   text = fetch_pdf_text(PDF_URL)
 
   # Remove Page # of #

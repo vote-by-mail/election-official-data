@@ -45,11 +45,11 @@ def parse_jurisdiction(soup, jurisdiction_name, county_name, fipscode):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):
   data = []
   text = cache_request(BASE_URL, verify=SSL_CERT)
   soup = BeautifulSoup(text, 'html.parser')
-  for county in tqdm(soup.find('select', id='Counties')('option')):
+  for county in tqdm(soup.find('select', id='Counties')('option'), disable=not verbose):
     if not county.get('value'):
       continue
     county_text = cache_request(

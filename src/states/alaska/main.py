@@ -17,7 +17,7 @@ def extract_phone_number(text):
   return phone_number
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   data = defaultdict(list)
 
   text = cache_request(URL)

@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from common import cache_request
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   text = cache_request('https://www.sos.ks.gov/elections/county_election_officers_all.aspx')
   soup = BeautifulSoup(text, 'html.parser')
 

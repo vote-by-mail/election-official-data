@@ -42,11 +42,11 @@ def fetch_county(county_name):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):
   html = cache_request(BASE_URL)
   soup = BeautifulSoup(html, 'lxml')
   counties = [option['value'] for option in soup.select('select>option') if option['value']]
-  return [fetch_county(county_name) for county_name in tqdm(counties)]
+  return [fetch_county(county_name) for county_name in tqdm(counties, disable=not verbose)]
 
 
 if __name__ == '__main__':

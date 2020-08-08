@@ -9,7 +9,7 @@ re_phone = re.compile(r"\(?\d{3}\)?[\.\-\s]*\d{3}[\.\-\s]*\d{4}")
 re_email = re.compile(r"\S+@\S+.\S+")
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_request(URL)
   soup = BeautifulSoup(html, 'html.parser')
   text = soup.find(class_='dcboeContent').get_text('\n')

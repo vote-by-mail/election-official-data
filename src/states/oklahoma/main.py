@@ -65,7 +65,7 @@ def parse_email_list(email_list_url):
   return email_by_county
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_request(BASE_URL)
   soup = BeautifulSoup(html, 'html.parser')
   pdf_url = urljoin(BASE_URL, soup.find('a', text=re.compile('^List of County Election Boards'))['href'])

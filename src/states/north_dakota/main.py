@@ -27,7 +27,7 @@ def parse_row(row):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_request(BASE_URL)
   soup = BeautifulSoup(html, 'html.parser')
   return [parse_row(row) for row in soup.select('table#ctl00_ContentPlaceHolder1_rgCountyAuditors_ctl00 tbody tr')]
