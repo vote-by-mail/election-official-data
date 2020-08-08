@@ -28,9 +28,9 @@ def collect(c, state):  # pylint: disable=unused-argument,invalid-name
   for state_name, ispkg in states_ispkg.items():
     print(f'Process {state_name}')
     state_module = importlib.import_module(f"states.{state_name}{'.main' if ispkg else ''}")
-    data = state_module.fetch_data()
+    data = state_module.fetch_data(verbose=state != 'limited')
     data = normalize_state(data)
-    diff_and_save(data, f'{state_name}.json')
+    diff_and_save(data, f'{state_name}.json', verbose=state != 'limited')
 
 
 @task
