@@ -37,7 +37,7 @@ def cache_xlsx(url=BASE_URL):  # use a keyword arg for key namer
     time.sleep(.5)
     xlsx_link = driver.find_element_by_partial_link_text('Town Clerk contact information (Excel)')
     xlsx_link.click()
-    time.sleep(1)  # wait for download
+    time.sleep(5)  # wait for download
     xlsx_path = os.path.join(work_dir, xlsx_link.get_attribute("href").split('/')[-1])
     with open(xlsx_path, mode='rb') as xlsx_file:
       xlsx = xlsx_file.read()
