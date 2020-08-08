@@ -54,12 +54,12 @@ def parse_county(soup):
   return results
 
 
-def fetch_data():
+def fetch_data(verbose=True):
   data = []
   text = cache_request('https://www.elections.ny.gov/CountyBoards.html')
   soup = BeautifulSoup(text, 'html.parser')
 
-  for county_area in tqdm(soup.find_all('area')):
+  for county_area in tqdm(soup.find_all('area'), disable=not verbose):
     county_link = county_area['href']
     text = cache_request(county_link)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))

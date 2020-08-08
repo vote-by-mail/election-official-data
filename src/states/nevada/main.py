@@ -36,7 +36,7 @@ def parse_county(text):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_webkit(BASE_URL)
 
   # watch for occasional captcha requirement (no current way around it)

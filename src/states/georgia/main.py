@@ -71,11 +71,11 @@ def parse_county(soup):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):
   data = []
   text = cache_request(LIST_URL)
   soup = BeautifulSoup(text, 'html.parser')
-  for county in tqdm(soup.find(id='idTown')('option')):
+  for county in tqdm(soup.find(id='idTown')('option'), disable=not verbose):
     wait = random.uniform(1, 3)
     text = cache_request(DETAIL_URL, method='POST', data={'idTown': county['value'], 'contactType': 'R'}, wait=wait)
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))

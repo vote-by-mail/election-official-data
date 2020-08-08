@@ -42,7 +42,7 @@ def find_hrefs(lines):
   return results
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   text = cache_request(BASE_URL)
   soup = BeautifulSoup(text, 'lxml')
   counties = soup.select('div.mdgov_contentWrapper > p')

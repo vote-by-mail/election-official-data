@@ -27,7 +27,7 @@ def parse_county(row):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_request(BASE_URL)
   soup = BeautifulSoup(html, 'html.parser')
   return [parse_county(row) for row in soup.body.select('tbody tr')]

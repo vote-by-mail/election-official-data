@@ -18,11 +18,11 @@ def parse_county(soup):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):
   data = []
   text = cache_request(BASE_URL)
   soup = BeautifulSoup(text, 'html.parser')
-  for county_link in tqdm(soup.select('a[href^=countyInfo]')):
+  for county_link in tqdm(soup.select('a[href^=countyInfo]'), disable=not verbose):
     text = cache_request(BASE_URL + county_link['href'])
     data.append(parse_county(BeautifulSoup(text, 'html.parser')))
 

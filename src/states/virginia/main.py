@@ -52,9 +52,9 @@ def get_locality_datum(id_, attempt=0):
   return get_locality_datum(id_, attempt + 1)
 
 
-def fetch_data():
+def fetch_data(verbose=True):
   ids = get_locality_ids()
-  locality_data = [get_locality_datum(id_) for id_ in tqdm(ids)]
+  locality_data = [get_locality_datum(id_) for id_ in tqdm(ids, disable=not verbose)]
   return locality_data
 
 

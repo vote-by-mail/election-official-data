@@ -65,7 +65,7 @@ def parse_xlsx(xlsx):
   return data.to_dict(orient='records')
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   _, xlsx = cache_xlsx()
   return parse_xlsx(xlsx)
 

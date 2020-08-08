@@ -64,7 +64,7 @@ def parse_county(county):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   text = cache_request(BASE_URL)
   soup = BeautifulSoup(text, 'lxml')
 

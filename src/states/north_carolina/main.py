@@ -27,7 +27,7 @@ def parse_county(county):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_request(BASE_URL)
   counties = json.loads(re_counties.findall(html)[0])
   return [parse_county(county) for county in counties]

@@ -32,7 +32,7 @@ def parse_county(soup):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_request('https://azsos.gov/county-election-info')
   soup = BeautifulSoup(html, 'html.parser')
   return [parse_county(county) for county in soup('div', id=re.compile('^county_info_')) if county.find('h2')]

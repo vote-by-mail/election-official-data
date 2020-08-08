@@ -52,7 +52,7 @@ def clean_row(row):
   return row
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   # extract __viewstate and other form params for .aspx
   page = cache_request(BASE_URL)
   soup = BeautifulSoup(page, 'lxml')

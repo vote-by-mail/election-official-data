@@ -50,7 +50,7 @@ def parse_county(county):
   }
 
 
-def fetch_data():
+def fetch_data(verbose=True):  # pylint: disable=unused-argument
   html = cache_request(BASE_URL).replace(u'\u200b', ' ')
   json_str = re.findall(r'CountyMap.MapPopup.init\(({.*?})\)', html)[0]
   raw_data = json.loads(json_str)['data']['Items']

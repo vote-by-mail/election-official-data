@@ -36,7 +36,7 @@ def cache_county(driver, county_name):
 
 
 @checkpoint(key=indiana_key_namer, work_dir=work_dir)
-def cache_list(url=BASE_URL):  # use a keyword arg for key namer
+def cache_list(url=BASE_URL, verbose=True):  # use a keyword arg for key namer
   """Use Selenium to load the base page and loop through all counties.
   Returns a dictionary of county_name: html_snippet, text_snippet;
   as well as the full source of the base page"""
@@ -47,7 +47,7 @@ def cache_list(url=BASE_URL):  # use a keyword arg for key namer
     driver.get(url)
     select = Select(driver.find_element_by_id('ddlCCounty'))
     county_names = [option.text for option in select.options if option.get_attribute('value')]
-    for county_name in tqdm(county_names):
+    for county_name in tqdm(county_names, disable=not verbose):
       counties[county_name] = cache_county(driver, county_name)
     return counties, driver.page_source
 
@@ -76,10 +76,10 @@ def fetch_emails():
   return emails.groupby('locale')['emails'].apply(list)
 
 
-def fetch_data():
-  counties, _ = cache_list()
+def fetch_data(verbose=True):
+  counties, _ = cache_list(verbose=verbose)
   data = pd.DataFrame(parse_county(county_name, county_text)
-                      for county_name, (_, county_text) in tqdm(counties.items()))
+                      for county_name, (_, county_text) in tqdm(counties.items(), disable=not verbose))
   data = data.join(fetch_emails(), on='locale', how='left')
   data['emails'] = data['emails'].apply(lambda x: x if isinstance(x, list) else [])
   return data.to_dict(orient='records')
