@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from common import fetch_pdf_text, cache_request, to_list
+from common import fetch_pdf_text, cache_request, to_list, re_to_e164
 
 BASE_URL = 'https://elections.wi.gov/clerks/directory'
 POST_URL = 'https://myvote.wi.gov/DesktopModules/GabMyVoteModules/api/WhereDoIVote/SearchPollingPlace'
@@ -16,8 +16,8 @@ clerk_re = re.compile(r'CLERK: (.*)')
 deputy_clerk_re = re.compile('DEPUTY CLERK: (.*)')
 municipal_address_re = re.compile(r'Municipal Address :([^:]+\n)+')
 mailing_address_re = re.compile(r'Mailing Address :([^:]+\n)+')
-phone_re = re.compile(r'Phone \d: ([()\d-]+)')
-fax_re = re.compile(r'Fax: ([()\d-]+)')
+phone_re = re.compile(r'Phone(?:\s*\d*)?:\s*(' + re_to_e164.pattern[1:] + ')')
+fax_re = re.compile(r'Fax:\s*(' + re_to_e164.pattern[1:] + ')')
 url_re = re.compile(r'(https?://[^\s/$.?#].[^\s]*)')
 # actual data has included non-WI state addresses
 re_addr = re.compile(r'^(.+?),\s*(.+?),?\s*([A-Za-z]{2})\.?\s*([\d-]+)', re.IGNORECASE)
@@ -68,6 +68,10 @@ def query_clerk_data(pdf_data):
         result = cache_request(POST_URL, method='POST', data=post_data, wait=random.uniform(.1, .3))
         json_data = json.loads(result).get('Data') or {}
         if json_data.get('clerk'):
+          for phfax_field in ['fax', 'phone1', 'phone2']:  # remove invalid phones/faxes
+            json_data['clerk'][phfax_field] = '\n'.join(
+              ''.join(phfax) for phfax in re_to_e164.findall(json_data['clerk'].get(phfax_field, ''))
+            )
           clerk_data.append(json_data['clerk'])
   return clerk_data
 
