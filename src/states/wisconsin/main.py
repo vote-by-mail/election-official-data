@@ -60,7 +60,7 @@ def parse_pdf(verbose=True):
 
 def query_clerk_data(pdf_data, verbose=True):
   clerk_data = []
-  for pdf_datum in tqdm(pdf_data, verbose=not verbose):
+  for pdf_datum in tqdm(pdf_data, disable=not verbose):
     for field in ['municipal_address', 'mailing_address']:
       if pdf_datum.get(field):
         street, city, _, zipcode = re_addr.search(pdf_datum.get(field)).groups()
