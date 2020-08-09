@@ -41,7 +41,8 @@ def key_namer(args, kwargs):
 
 
 def selenium_key_namer(args, kwargs):
-  return 'sel_' + key_namer(args, kwargs)
+  wait_driver_free = {k: v for k, v in kwargs.items() if k not in ('wait', 'driver')}
+  return 'sel_' + sha256(str(args) + str(wait_driver_free)) + '.pkl'
 
 
 def webkit_key_namer(args, kwargs):
@@ -66,15 +67,22 @@ def cache_request(url, method='GET', data=None, wait=None, is_binary=False, veri
   return response.text
 
 
-@checkpoint(key=selenium_key_namer, work_dir=work_dir)
-def cache_selenium(url, wait=None):
-  if wait is not None:
-    time.sleep(wait)
+def init_selenium_driver():
   options = webdriver.ChromeOptions()
   options.add_argument('headless')
-  with webdriver.Chrome(options=options) as driver:
-    driver.get(url)
-    return driver.page_source
+  return webdriver.Chrome(options=options)
+
+
+@checkpoint(key=selenium_key_namer, work_dir=work_dir)
+def cache_selenium(url, wait=None, driver=None):
+  if wait is not None:
+    time.sleep(wait)
+  if not driver:
+    with init_selenium_driver() as new_driver:
+      new_driver.get(url)
+      return new_driver.page_source
+  driver.get(url)
+  return driver.page_source
 
 
 class Render(QWebEngineView):  # pylint: disable=too-few-public-methods
