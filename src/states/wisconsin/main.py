@@ -69,9 +69,8 @@ def query_clerk_data(pdf_data, verbose=True):
         json_data = json.loads(result).get('Data') or {}
         if json_data.get('clerk'):
           for phfax_field in ['fax', 'phone1', 'phone2']:  # remove invalid phones/faxes
-            json_data['clerk'][phfax_field] = '\n'.join(
-              ''.join(phfax) for phfax in re_to_e164.findall(json_data['clerk'].get(phfax_field, ''))
-            )
+            phfax_match = re_to_e164.findall(json_data['clerk'].get(phfax_field, ''))
+            json_data['clerk'][phfax_field] = ''.join(phfax_match[0]) if phfax_match else None
           clerk_data.append(json_data['clerk'])
   return clerk_data
 
