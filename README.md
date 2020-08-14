@@ -68,6 +68,8 @@ git commit -m "20200714 unscheduled run"
 git push origin trigger-public-data
 ```
 
+This will automatically create a tag with the updated data and proper date.
+
 ### Manually collecting data locally
 Some state code (i.e. Nevada) does not seem to work on Github Actions.  Instead, it needs to be run manually.  To do this, you must run the following commands (changing values for the tag as necessary)
 ```
