@@ -5,6 +5,7 @@ from common import cache_request
 
 BASE_URL = 'https://www.elections.ny.gov/CountyBoards.html'
 
+# This regex has to handle "St. Lawrence County"
 re_locale_address = re.compile(r'^(?P<locale>[^\n]+?\s*County)\s*Board of Elections\s*'
                                + r'(?P<address>\S.*\d{5}(-\d+)?)\s*',
                                re.MULTILINE | re.DOTALL)
