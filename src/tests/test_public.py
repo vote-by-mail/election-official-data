@@ -57,7 +57,7 @@ class TestPublic(unittest.TestCase):
       self.assertGreater(len(data), 10)
 
     for datum in data:
-      self.assert_nonempty_string(datum.get('locale'), allow_none=False)
+      self.assert_nonempty_string(datum.get('locale'), allow_none=False, regex=re.compile(r'[\w\-&()\'\. ]*:?[\w\-&()\'\. ]*'))
       self.assert_nonempty_string(datum.get('official'), titled=False)
 
       self.assert_nonempty_string(datum.get('city'))
