@@ -57,6 +57,9 @@ class TestPublic(unittest.TestCase):
       self.assertGreater(len(data), 10)
 
     for datum in data:
+      # efforts to disallow '.' in locales were unsuccessful due to St., Mt., and even more unusual yet valid locale names
+      # valid locales were also found using &, (), numbers, and ' in the context of possessives
+      # the regex below limits locales to a single colon, e.g. city:county
       self.assert_nonempty_string(datum.get('locale'), allow_none=False, regex=re.compile(r'[\w\-&()\'\. ]*:?[\w\-&()\'\. ]*'))
       self.assert_nonempty_string(datum.get('official'), titled=False)
 
