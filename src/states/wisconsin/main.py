@@ -19,7 +19,8 @@ mailing_address_re = re.compile(r'Mailing Address :([^:]+\n)+')
 phone_re = re.compile(r'Phone \d: ([()\d-]+)')
 fax_re = re.compile(r'Fax: ([()\d-]+)')
 url_re = re.compile(r'(https?://[^\s/$.?#].[^\s]*)')
-re_addr = re.compile(r'^(.+?),\s*(.+?),?\s*WI\.?\s*([\d-]+)', re.IGNORECASE)
+# One clerk has their residencial address in PA
+re_addr = re.compile(r'^(.+?),\s*(.+?),?\s*(WI|PA)\.?\s*([\d-]+)', re.IGNORECASE)
 
 
 def first_group(regex, text):
@@ -62,8 +63,8 @@ def query_clerk_data(pdf_data):
   for pdf_datum in tqdm(pdf_data):
     for field in ['municipal_address', 'mailing_address']:
       if pdf_datum.get(field):
-        street, city, zipcode = re_addr.search(pdf_datum.get(field)).groups()
-        post_data = {'addressLine': street, 'unit': "", 'city': city, 'zip': zipcode}
+        street, city, state, zipcode = re_addr.search(pdf_datum.get(field)).groups()
+        post_data = {'addressLine': street, 'unit': "", 'state': state, 'city': city, 'zip': zipcode}
         result = cache_request(POST_URL, method='POST', data=post_data, wait=random.uniform(.1, .3))
         json_data = json.loads(result).get('Data') or {}
         if json_data.get('clerk'):
