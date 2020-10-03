@@ -5,7 +5,7 @@ import unicodedata
 import os
 from tqdm import tqdm
 from bs4 import BeautifulSoup
-from common import dir_path, cache_request
+from common import dir_path, cache_request, re_to_e164
 
 BASE_URL = "https://mvic.sos.state.mi.us/Clerk"
 
@@ -17,8 +17,8 @@ SSL_CERT = os.path.join(dir_path(__file__), 'michigan_chain.pem')
 re_official = re.compile(r'^\s*(.*?)\s*[,\n]')
 re_phys_addr = re.compile(r'\n(.*?\d{5}(?:-\d{4})?)\n', re.MULTILINE | re.DOTALL)
 re_mail_addr = re.compile(r'Mailing\s+Address:\s+(.*?\d{5}(?:-\d{4})?)\n', re.MULTILINE | re.DOTALL)
-re_phone = re.compile(r'\nPhone:[^\n\S]*(.+?)\s*\n')
-re_fax = re.compile(r'Fax:[^\n\S]*(.+?)\s*\n')
+re_phone = re.compile(r'\nPhone:[^\n\S]*(' + re_to_e164.pattern[1:] + r')\s*\n')
+re_fax = re.compile(r'Fax:[^\n\S]*(' + re_to_e164.pattern[1:] + r')\s*\n')
 
 
 def random_wait(min_wait=.1, max_wait=.3):
@@ -36,8 +36,8 @@ def parse_jurisdiction(soup, jurisdiction_name, county_name, fipscode):
     'city': city,
     'county': county,
     'emails': [a['href'].replace('mailto:', '').strip() for a in body.select("a[href^=mailto]")],
-    'phones': re_phone.findall(info),
-    'faxes': re_fax.findall(info),
+    'phones': [match[0] for match in re_phone.findall(info)],
+    'faxes': [match[0] for match in re_fax.findall(info)],
     'official': re_official.findall(info)[0],
     'address': mail_addr[0].replace('\n', ', ') if mail_addr else None,
     'physicalAddress': phys_addr[0].replace('\n', ', ') if phys_addr else None,
