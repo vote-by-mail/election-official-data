@@ -12,6 +12,7 @@ POST_URL = 'https://myvote.wi.gov/DesktopModules/GabMyVoteModules/api/WhereDoIVo
 
 re_city_chunk = re.compile(r'((?:CITY|TOWN|VILLAGE)\s+OF.+?)(?=\n(?:CITY|TOWN|VILLAGE) OF|Page \d+ of \d+)', re.DOTALL)
 city_county_re = re.compile(r'(CITY|TOWN|VILLAGE)\s+OF\s+([A-Z.\- \n]+)\s+-\s+([A-Z.\- \n]+\s+COUNTY|MULTIPLE\s+COUNTIES)')
+hindi_re = re.compile(r'[0-9]{5}')
 clerk_re = re.compile(r'CLERK: (.*)')
 deputy_clerk_re = re.compile('DEPUTY CLERK: (.*)')
 municipal_address_re = re.compile(r'Municipal Address :([^:]+\n)+')
@@ -36,6 +37,7 @@ def parse_city(text):
   match = city_county_re.search(text)
   ret = {
     'key': match.group(0).strip(),
+    'hindi': hindi_re.search(text).group(0).strip(),
     'city_type': match.group(1),
     'city': match.group(2),
     'county': match.group(3),
@@ -91,6 +93,7 @@ def aggregate(pdf_data, qry_data):
     'mailingAddress': 'address',
     'clerkName': 'official',
     'jurisdictionName': 'locale',
+    'hindi': 'code',
   }, axis=1)
   df_qry['key'] = df_qry['locale'].str.title()
   df_merged = df_pdf.merge(df_qry, on='key', how='left').reset_index(drop=True)
@@ -114,6 +117,7 @@ def aggregate(pdf_data, qry_data):
   df_final['county'] = df_merged['county'].replace('Multiple Counties', np.nan).str.strip()
   df_final['faxes'] = df_final['faxes'].apply(to_list)
   df_final['emails'] = (df_merged['email'] + '; ' + df_merged['notificationEmail']).apply(split_emails)
+  df_final['code'] = df_merged['hindi']
 
   df_final = df_final.where(pd.notnull(df_final), None)
   return df_final.to_dict(orient='records')
