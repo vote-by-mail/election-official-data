@@ -1,8 +1,7 @@
 import csv
 import os
-import json
 import unittest
-from common import dir_path, public_dir
+from common import dir_path, get_data_geocodes
 
 
 def get_arcgis_fipscode():
@@ -16,15 +15,6 @@ def get_arcgis_fipscode():
     return sorted([row[label_idx] for row in rows])
 
 
-def get_data_fipscode():
-  file_ = os.path.join(public_dir, 'michigan.json')
-  if os.path.exists(file_):
-    with open(file_) as json_file:
-      rows = json.load(json_file)
-      return sorted([row['fipscode'] for row in rows])
-  return None
-
-
 class TestMichiganFips(unittest.TestCase):
   '''
   Test that Michigan Arcgis and local county officials share fipcodes
@@ -32,7 +22,7 @@ class TestMichiganFips(unittest.TestCase):
 
   def test_michigan_fips(self):
     arcgis_fipscode = get_arcgis_fipscode()
-    data_fipscode = get_data_fipscode()
+    data_fipscode = get_data_geocodes('michigan.json')
     if data_fipscode:
       self.assertEqual(set(data_fipscode), set(arcgis_fipscode))
 

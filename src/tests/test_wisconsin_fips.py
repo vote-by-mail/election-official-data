@@ -1,8 +1,7 @@
 import csv
 import os
-import json
 import unittest
-from common import dir_path, public_dir
+from common import dir_path, get_data_geocodes
 
 
 def get_arcgis_code():
@@ -16,15 +15,6 @@ def get_arcgis_code():
     return sorted([row[label_idx] for row in rows])
 
 
-def get_data_code():
-  file_ = os.path.join(public_dir, 'wisconsin.json')
-  if os.path.exists(file_):
-    with open(file_) as json_file:
-      rows = json.load(json_file)
-      return sorted([row['fipscode'] for row in rows])
-  return None
-
-
 class TestWisconsinCode(unittest.TestCase):
   '''
   Test that Wisconsin Arcgis and local county officials share DOA code
@@ -32,7 +22,7 @@ class TestWisconsinCode(unittest.TestCase):
 
   def test_wisconsin_code(self):
     arcgis_code = get_arcgis_code()
-    data_code = get_data_code()
+    data_code = get_data_geocodes('wisconsin.json')
     # We want to make sure the intersection is really significant (i.e.)
     # above 95%
     if data_code:

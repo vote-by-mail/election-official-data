@@ -172,3 +172,13 @@ def fetch_pdf_text(pdf_url):
   with BytesIO(response) as pdf_file:
     pdf_reader = PdfFileReader(pdf_file)
     return ''.join(page.extractText() for page in tqdm(pdf_reader.pages))
+
+
+# used for geo code tests
+def get_data_geocodes(fname):
+  file_ = os.path.join(public_dir, fname)
+  if os.path.exists(file_):
+    with open(file_) as json_file:
+      rows = json.load(json_file)
+      return sorted([row['fipscode'] for row in rows])
+  return None
