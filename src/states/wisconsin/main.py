@@ -93,7 +93,7 @@ def aggregate(pdf_data, qry_data):
     'mailingAddress': 'address',
     'clerkName': 'official',
     'jurisdictionName': 'locale',
-    'hindi': 'code',
+    'hindi': 'fipscode',
   }, axis=1)
   df_qry['key'] = df_qry['locale'].str.title()
   df_merged = df_pdf.merge(df_qry, on='key', how='left').reset_index(drop=True)
@@ -117,7 +117,7 @@ def aggregate(pdf_data, qry_data):
   df_final['county'] = df_merged['county'].replace('Multiple Counties', np.nan).str.strip()
   df_final['faxes'] = df_final['faxes'].apply(to_list)
   df_final['emails'] = (df_merged['email'] + '; ' + df_merged['notificationEmail']).apply(split_emails)
-  df_final['code'] = df_merged['hindi']
+  df_final['fipscode'] = df_merged['hindi']
 
   df_final = df_final.where(pd.notnull(df_final), None)
   return df_final.to_dict(orient='records')

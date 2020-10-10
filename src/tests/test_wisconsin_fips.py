@@ -21,7 +21,7 @@ def get_data_code():
   if os.path.exists(file_):
     with open(file_) as json_file:
       rows = json.load(json_file)
-      return sorted([row['code'] for row in rows])
+      return sorted([row['fipscode'] for row in rows])
   return None
 
 
