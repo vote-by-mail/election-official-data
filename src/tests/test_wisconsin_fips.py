@@ -28,7 +28,7 @@ class TestWisconsinCode(unittest.TestCase):
     if data_code:
       data_code_size = len(data_code)
       arcgis_code_size = len(arcgis_code)
-      intersection_size = len(list(set(arcgis_code) & set(data_code)))
+      intersection_size = len(set(arcgis_code) & set(data_code))
       self.assertTrue(intersection_size / max(arcgis_code_size, data_code_size) > 0.95)
 
       # We also hardcode the divergent amount between the two, so when this
@@ -38,9 +38,9 @@ class TestWisconsinCode(unittest.TestCase):
       # Current values were taken at October 9 2020
 
       # There's 65 items on ArcGIS not present on the Election Officials Data
-      self.assertTrue(len(list(set(arcgis_code) - set(data_code))) == 65)
+      self.assertTrue(len(set(arcgis_code) - set(data_code)) == 65)
       # There's 9 items on the Election Officials Data not present on ArcGIS
-      self.assertTrue(len(list(set(data_code) - set(arcgis_code))) == 9)
+      self.assertTrue(len(set(data_code) - set(arcgis_code)) == 9)
 
 
 if __name__ == '__main__':
